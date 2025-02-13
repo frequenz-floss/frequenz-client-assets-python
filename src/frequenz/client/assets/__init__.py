@@ -1,10 +1,7 @@
 # License: MIT
 # Copyright © 2025 Frequenz Energy-as-a-Service GmbH
 
-"""Assets API client for Python.
-
-TODO(cookiecutter): Add a more descriptive module description.
-"""
+"""Assets API client for Python."""
 
 
 # TODO(cookiecutter): Remove this function

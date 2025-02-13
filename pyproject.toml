@@ -15,7 +15,6 @@ description = "Assets API client for Python"
 readme = "README.md"
 license = { text = "MIT" }
 keywords = ["frequenz", "python", "lib", "library", "frequenz-client-assets", "client-assets", "client", "assets", "api"]
-# TODO(cookiecutter): Remove and add more classifiers if appropriate
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Developers",
@@ -26,7 +25,6 @@ classifiers = [
   "Typing :: Typed",
 ]
 requires-python = ">= 3.11, < 4"
-# TODO(cookiecutter): Remove and add more dependencies if appropriate
 dependencies = [
   "typing-extensions >= 4.12.2, < 5",
 ]
@@ -36,7 +34,6 @@ dynamic = ["version"]
 name = "Frequenz Energy-as-a-Service GmbH"
 email = "floss@frequenz.com"
 
-# TODO(cookiecutter): Remove and add more optional dependencies if appropriate
 [project.optional-dependencies]
 dev-flake8 = [
   "flake8 == 7.1.1",
