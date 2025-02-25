@@ -2,7 +2,7 @@
 
 ## Summary
 
-<!-- Here goes a general summary of what this release is about -->
+This release introduces the initial version of the Assets API client, enabling retrieval of asset-related data.
 
 ## Upgrading
 
@@ -10,7 +10,12 @@
 
 ## New Features
 
-<!-- Here goes the main new features and examples or instructions on how to use them -->
+Introducing the initial version of the Assets API client, designed to streamline access to asset-related data.
+
+* Supports querying asset components and retrieving their metrics efficiently.
+* Provides a structured data representation while retaining raw protobuf responses.
+* Currently focused on retrieving asset data for individual components.
+* Examples are provided to guide users through the basic usage of the client.
 
 ## Bug Fixes
 

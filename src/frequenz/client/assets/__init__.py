@@ -13,7 +13,6 @@ def delete_me(*, blow_up: bool = False) -> bool:
 
     Returns:
         True if no exception was raised.
-
     Raises:
         RuntimeError: if blow_up is True.
     """
