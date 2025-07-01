@@ -30,7 +30,7 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-20.04
+          - ubuntu-24.04
         python:
           - "3.11"
         nox-session:
@@ -93,7 +93,7 @@ jobs:
     needs: ["nox"]
     # We skip this job only if nox was also skipped
     if: always() && needs.nox.result != 'skipped'
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     env:
       DEPS_RESULT: ${{ needs.nox.result }}
     steps:
@@ -113,7 +113,7 @@ jobs:
         arch:
           - arm64
         os:
-          - ubuntu-20.04
+          - ubuntu-24.04
         python:
           - "3.11"
         nox-session:
@@ -214,7 +214,7 @@ jobs:
     needs: ["nox-cross-arch"]
     # We skip this job only if nox-cross-arch was also skipped
     if: always() && needs.nox-cross-arch.result != 'skipped'
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     env:
       DEPS_RESULT: ${{ needs.nox-cross-arch.result }}
     steps:
@@ -223,7 +223,7 @@ jobs:
 
   build:
     name: Build distribution packages
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Setup Git
         uses: frequenz-floss/gh-action-setup-git@v0.x.x
@@ -258,7 +258,7 @@ jobs:
   test-installation:
     name: Test package installation in different architectures
     needs: ["build"]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Setup Git
         uses: frequenz-floss/gh-action-setup-git@v0.x.x
@@ -295,7 +295,7 @@ jobs:
   test-docs:
     name: Test documentation website generation
     if: github.event_name != 'push'
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Setup Git
         uses: frequenz-floss/gh-action-setup-git@v0.x.x
@@ -335,7 +335,7 @@ jobs:
     name: Publish documentation website to GitHub pages
     needs: ["nox-all", "nox-cross-arch-all", "test-installation"]
     if: github.event_name == 'push'
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     permissions:
       contents: write
     steps:
@@ -412,7 +412,7 @@ jobs:
       # discussions to create the release announcement in the discussion forums
       contents: write
       discussions: write
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Download distribution files
         uses: actions/download-artifact@v4
@@ -454,7 +454,7 @@ jobs:
   publish-to-pypi:
     name: Publish packages to PyPI
     needs: ["create-github-release"]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     permissions:
       # For trusted publishing. See:
       # https://blog.pypi.org/posts/2023-04-20-introducing-trusted-publishers/
