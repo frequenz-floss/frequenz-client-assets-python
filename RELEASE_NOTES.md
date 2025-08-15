@@ -2,16 +2,44 @@
 
 ## Summary
 
-<!-- Here goes a general summary of what this release is about -->
+This release introduces a complete Assets API client with CLI support for interacting with Frequenz microgrid assets, including comprehensive error handling and type safety.
 
 ## Upgrading
 
-<!-- Here goes notes on how to upgrade from previous versions, including deprecations and what they should be replaced with -->
+**Breaking Changes:**
+
+- Removed deprecated `delete_me` function
+- Added new required dependencies: `frequenz-api-assets`, `frequenz-api-common`, `frequenz-client-base`, `grpcio`
+
+**CLI Support:**
+Install with `pip install "frequenz-client-assets[cli]"` for command-line functionality.
 
 ## New Features
 
-<!-- Here goes the main new features and examples or instructions on how to use them -->
+**Assets API Client:**
+
+- Complete gRPC client for Frequenz Assets API
+- Extends `BaseApiClient` for authentication and connection management
+- `get_microgrid_details()` method for retrieving microgrid information
+
+**Command-Line Interface:**
+
+- `python -m frequenz.client.assets microgrid <id>` command
+- Environment variable support for API credentials
+- JSON output formatting
+
+**Type System:**
+
+- `Microgrid`, `DeliveryArea`, and `Location` data classes
+- Protobuf integration with proper type safety
+
+**Exception Handling:**
+
+- Custom exception hierarchy (`AssetsApiError`, `NotFoundError`, `AuthenticationError`, `ServiceUnavailableError`)
+- JSON serialization support for error responses
 
 ## Bug Fixes
 
-<!-- Here goes notable bug fixes that are worth a special mention or explanation -->
+- Improved dependency management with optional dependency groups
+- Enhanced gRPC error handling and type safety
+- Cleaned up deprecated code
