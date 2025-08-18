@@ -9,7 +9,7 @@ from unittest.mock import AsyncMock
 import pytest
 from typing_extensions import Generator
 
-from frequenz.client.assets import AssetsApiClient as Client
+from frequenz.client.assets import AssetsApiClient
 
 from .helpers.factories import (
     create_delivery_area_mock,
@@ -24,7 +24,7 @@ from .helpers.test_data import MockData
 class ClientSetup:  # pylint: disable=too-many-instance-attributes
     """Parameters for setting up the client."""
 
-    client: Client
+    client: AssetsApiClient
     mock_stub: AsyncMock
     microgrid_id: int
     enterprise_id: int
@@ -42,7 +42,7 @@ def client_setup() -> Generator[ClientSetup, None, None]:
 
     This fixture is used to set up the client and the mock stub.
     """
-    client = Client(
+    client = AssetsApiClient(
         server_url=MockData.server_url,
         auth_key=MockData.auth_key,
         sign_secret=MockData.sign_secret,

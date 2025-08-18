@@ -9,7 +9,7 @@ import pytest
 from grpc import StatusCode
 from grpc.aio import AioRpcError
 
-from frequenz.client.assets.exceptions import NotFoundError
+from frequenz.client.assets.exceptions import EntityNotFound
 
 from .conftest import ClientSetup
 from .helpers.assertions import AssertionHelpers
@@ -156,13 +156,13 @@ async def test_get_microgrid_details_not_found(
     mock_stub.GetMicrogrid.side_effect = MockAioRpcError()
 
     # Execute and assert exception is raised
-    with pytest.raises(NotFoundError) as exc_info:
+    with pytest.raises(EntityNotFound) as exc_info:
         await client.get_microgrid_details(client_setup.microgrid_id)
 
     # Assert exception details
-    assert exc_info.value.resource_id == client_setup.microgrid_id
-    assert exc_info.value.status_code == "NOT_FOUND"
-    assert "not found" in exc_info.value.message.lower()
+    grpc_error = exc_info.value.grpc_error
+    assert grpc_error.code() == StatusCode.NOT_FOUND
+    assert grpc_error.details() == "Microgrid not found"
 
     # Verify stub was called correctly
     mock_stub.GetMicrogrid.assert_called_once()

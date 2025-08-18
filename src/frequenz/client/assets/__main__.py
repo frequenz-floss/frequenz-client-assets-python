@@ -34,12 +34,11 @@ Environment Variables:
 
 import asyncio
 import json
-from typing import Optional
 
 import asyncclick as click
 
 from frequenz.client.assets._client import AssetsApiClient
-from frequenz.client.assets.exceptions import AssetsApiError
+from frequenz.client.assets.exceptions import ApiClientError
 from frequenz.client.assets.types import Microgrid
 
 
@@ -84,8 +83,8 @@ def print_microgrid_details(microgrid: Microgrid) -> None:
 async def cli(
     ctx: click.Context,
     url: str,
-    auth_key: Optional[str],
-    sign_secret: Optional[str],
+    auth_key: str | None,
+    sign_secret: str | None,
 ) -> None:
     """
     Set up the main CLI group for the Assets API client.
@@ -143,7 +142,7 @@ async def get_microgrid(
         microgrid_id: The unique identifier of the microgrid to retrieve.
 
     Raises:
-        click.Abort: If an error occurs during API communication or data processing.
+        click.Abort: If there is an error printing the microgrid details.
 
     Example:
         ```bash
@@ -158,17 +157,14 @@ async def get_microgrid(
         client = ctx.obj["client"]
         microgrid_details = await client.get_microgrid_details(microgrid_id)
         print_microgrid_details(microgrid_details)
-    except Exception as e:
-        if isinstance(e, AssetsApiError):
-            error_dict = e.to_dict()
-            click.echo(json.dumps(error_dict, indent=2))
-        else:
-            error_dict = {
-                "error": "UNKNOWN_ERROR",
-                "message": str(e),
-                "type": type(e).__name__,
-            }
-            click.echo(json.dumps(error_dict, indent=2))
+    except ApiClientError as e:
+        error_dict = {
+            "error_type": type(e).__name__,
+            "server_url": e.server_url,
+            "operation": e.operation,
+            "description": e.description,
+        }
+        click.echo(json.dumps(error_dict, indent=2))
         raise click.Abort()
 
 

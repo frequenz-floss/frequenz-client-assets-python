@@ -7,37 +7,22 @@ Assets API client.
 This module provides a client for the Assets API.
 """
 
-from typing import Awaitable, Optional, cast
+from frequenz.api.assets.v1 import assets_pb2, assets_pb2_grpc
+from frequenz.client.base.client import BaseApiClient, call_stub_method
 
-import grpc
-from frequenz.api.assets.v1.assets_pb2 import (
-    GetMicrogridRequest as PBGetMicrogridRequest,
-)
-from frequenz.api.assets.v1.assets_pb2 import (
-    GetMicrogridResponse as PBGetMicrogridResponse,
-)
-from frequenz.api.assets.v1.assets_pb2_grpc import PlatformAssetsStub
-from frequenz.client.base.client import BaseApiClient
-from frequenz.client.base.exception import ClientNotConnected
-from grpc import StatusCode
-
-from frequenz.client.assets.exceptions import (
-    AssetsApiError,
-    AuthenticationError,
-    NotFoundError,
-    ServiceUnavailableError,
-)
 from frequenz.client.assets.types import Microgrid
 
+from .exceptions import ClientNotConnected
 
-class AssetsApiClient(BaseApiClient[PlatformAssetsStub]):
+
+class AssetsApiClient(BaseApiClient[assets_pb2_grpc.PlatformAssetsStub]):
     """A client for the Assets API."""
 
     def __init__(
         self,
         server_url: str,
-        auth_key: Optional[str],
-        sign_secret: Optional[str],
+        auth_key: str | None,
+        sign_secret: str | None,
         connect: bool = True,
     ) -> None:
         """
@@ -51,14 +36,14 @@ class AssetsApiClient(BaseApiClient[PlatformAssetsStub]):
         """
         super().__init__(
             server_url,
-            PlatformAssetsStub,
+            assets_pb2_grpc.PlatformAssetsStub,
             connect=connect,
             auth_key=auth_key,
             sign_secret=sign_secret,
         )
 
     @property
-    def stub(self) -> PlatformAssetsStub:
+    def stub(self) -> assets_pb2_grpc.PlatformAssetsStub:
         """
         The gRPC stub for the Assets API.
 
@@ -70,9 +55,11 @@ class AssetsApiClient(BaseApiClient[PlatformAssetsStub]):
         """
         if self._channel is None or self._stub is None:
             raise ClientNotConnected(server_url=self.server_url, operation="stub")
-        return self._stub
+        return self._stub  # type: ignore
 
-    async def get_microgrid_details(self, microgrid_id: int) -> Microgrid:
+    async def get_microgrid_details(  # noqa: DOC502 (raises ApiClientError indirectly)
+        self, microgrid_id: int
+    ) -> Microgrid:
         """
         Get the details of a microgrid.
 
@@ -83,40 +70,14 @@ class AssetsApiClient(BaseApiClient[PlatformAssetsStub]):
             The details of the microgrid.
 
         Raises:
-            NotFoundError: If the microgrid is not found.
-            AuthenticationError: If the authentication fails.
-            ServiceUnavailableError: If the service is unavailable.
-            AssetsApiError: If the API returns an error.
-            Exception: If an unexpected error occurs.
+            ApiClientError: If there are any errors communicating with the Assets API,
+                most likely a subclass of [GrpcError][frequenz.client.assets.GrpcError].
         """
-        try:
-            request = PBGetMicrogridRequest(microgrid_id=microgrid_id)
-            response = await cast(
-                Awaitable[PBGetMicrogridResponse],
-                self.stub.GetMicrogrid(request),
-            )
+        request = assets_pb2.GetMicrogridRequest(microgrid_id=microgrid_id)
+        response = await call_stub_method(
+            self,
+            lambda: self.stub.GetMicrogrid(request),
+            method_name="GetMicrogrid",
+        )
 
-            if response.microgrid is None:
-                raise NotFoundError(microgrid_id)
-
-            return Microgrid.from_protobuf(response.microgrid)
-        except grpc.aio.AioRpcError as e:
-            if e.code() == StatusCode.NOT_FOUND:
-                raise NotFoundError(microgrid_id) from e
-            if e.code() == StatusCode.UNAUTHENTICATED:
-                raise AuthenticationError(e.details()) from e
-            if e.code() == StatusCode.UNAVAILABLE:
-                raise ServiceUnavailableError(e.details()) from e
-            raise AssetsApiError(
-                message=f"gRPC error: {e.details() or 'Unknown error'}",
-                status_code=e.code().name,
-                details=e.details(),
-            ) from e
-        except Exception as e:
-            if not isinstance(e, AssetsApiError):
-                raise AssetsApiError(
-                    message=str(e),
-                    status_code=None,
-                    details=None,
-                ) from e
-            raise e
+        return Microgrid.from_protobuf(response.microgrid)

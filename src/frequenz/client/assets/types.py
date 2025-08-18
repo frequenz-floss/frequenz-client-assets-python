@@ -18,6 +18,7 @@ from frequenz.api.common.v1alpha8.microgrid.microgrid_pb2 import (
     Microgrid as PBMicrogrid,
 )
 from frequenz.api.common.v1alpha8.types.location_pb2 import Location as PBLocation
+from frequenz.client.common.microgrid import EnterpriseId, MicrogridId
 
 
 @dataclass(frozen=True)
@@ -114,8 +115,8 @@ class Microgrid:
         create_time: Timestamp when the microgrid was created.
     """
 
-    id: int
-    enterprise_id: int
+    id: MicrogridId
+    enterprise_id: EnterpriseId
     name: str
     delivery_area: Optional[DeliveryArea]
     location: Optional[Location]
