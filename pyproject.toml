@@ -26,7 +26,7 @@ classifiers = [
 ]
 requires-python = ">= 3.11, < 4"
 dependencies = [
-  "typing-extensions >= 4.12.2, < 5",
+  "typing-extensions >= 4.13.0, < 5",
   "frequenz-api-assets @ git+https://github.com/frequenz-floss/frequenz-api-assets.git@v0.x.x",
   "frequenz-api-common >= 0.8.0, < 1",
   "frequenz-client-base >= 0.11.0, < 0.12.0",

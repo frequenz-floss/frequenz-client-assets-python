@@ -3,11 +3,11 @@
 
 """Global test configuration and fixtures."""
 
+from collections.abc import Iterator
 from dataclasses import dataclass
 from unittest.mock import AsyncMock
 
 import pytest
-from typing_extensions import Generator
 
 from frequenz.client.assets import AssetsApiClient
 
@@ -36,7 +36,7 @@ class ClientSetup:  # pylint: disable=too-many-instance-attributes
 
 
 @pytest.fixture
-def client_setup() -> Generator[ClientSetup, None, None]:
+def client_setup() -> Iterator[ClientSetup]:
     """
     Generate a setup parameters for the client.
 

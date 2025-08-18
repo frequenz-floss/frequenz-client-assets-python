@@ -6,6 +6,8 @@
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock
 
+from frequenz.client.assets.types import DeliveryArea, Location, Microgrid
+
 from .test_data import MockData
 
 
@@ -17,7 +19,7 @@ def create_microgrid_mock(
     **overrides: Any,
 ) -> AsyncMock:
     """Create microgrid mocks with defaults."""
-    mock = AsyncMock()
+    mock = AsyncMock(name="microgrid_mock", spec=Microgrid)
     mock.id = microgrid_id
     mock.enterprise_id = enterprise_id
     mock.name = name
@@ -42,7 +44,7 @@ def create_delivery_area_mock(
     code_type: str = MockData.delivery_area_type,
 ) -> AsyncMock:
     """Create delivery area mocks."""
-    mock = AsyncMock()
+    mock = AsyncMock(name="delivery_area_mock", spec=DeliveryArea)
     mock.code = code
     mock.code_type = code_type
     return mock
@@ -54,7 +56,7 @@ def create_location_mock(
     country_code: str = MockData.country_code,
 ) -> AsyncMock:
     """Create location mocks."""
-    mock = AsyncMock()
+    mock = AsyncMock(name="location_mock", spec=Location)
     mock.latitude = latitude
     mock.longitude = longitude
     mock.country_code = country_code

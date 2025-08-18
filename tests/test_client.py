@@ -12,7 +12,13 @@ from grpc.aio import AioRpcError
 from frequenz.client.assets.exceptions import EntityNotFound
 
 from .conftest import ClientSetup
-from .helpers.assertions import AssertionHelpers
+from .helpers.assertions import (
+    assert_delivery_area_absent,
+    assert_delivery_area_present,
+    assert_location_absent,
+    assert_location_present,
+    assert_microgrid_basic_fields,
+)
 
 
 def setup_microgrid_with_fields(
@@ -89,18 +95,18 @@ async def test_get_microgrid_details_optional_fields(
     result = await client.get_microgrid_details(client_setup.microgrid_id)
 
     # Assert basic fields always present
-    AssertionHelpers.assert_microgrid_basic_fields(result)
+    assert_microgrid_basic_fields(result)
 
     # Assert optional fields based on parameters
     if has_delivery_area:
-        AssertionHelpers.assert_delivery_area_present(result)
+        assert_delivery_area_present(result)
     else:
-        AssertionHelpers.assert_delivery_area_absent(result)
+        assert_delivery_area_absent(result)
 
     if has_location:
-        AssertionHelpers.assert_location_present(result)
+        assert_location_present(result)
     else:
-        AssertionHelpers.assert_location_absent(result)
+        assert_location_absent(result)
 
     # Verify stub was called correctly
     mock_stub.GetMicrogrid.assert_called_once()
@@ -127,9 +133,11 @@ async def test_get_microgrid_details_basic_functionality(
     result = await client.get_microgrid_details(client_setup.microgrid_id)
 
     # Assert
-    AssertionHelpers.assert_microgrid_basic_fields(result)
-    AssertionHelpers.assert_delivery_area_absent(result)
-    AssertionHelpers.assert_location_absent(result)
+    assert_microgrid_basic_fields(result)
+    assert_delivery_area_absent(result)
+    assert_location_absent(result)
+
+    # Verify stub was called correctly
     mock_stub.GetMicrogrid.assert_called_once()
 
 
@@ -145,10 +153,11 @@ async def test_get_microgrid_details_not_found(
 
         def __init__(self) -> None:
             # Don't call super().__init__() # pylint: disable=super-init-not-called
-            pass
+            self._debug_error_string = "Mock debug error string"
+            self._code = StatusCode.NOT_FOUND
 
         def code(self) -> StatusCode:
-            return StatusCode.NOT_FOUND
+            return self._code
 
         def details(self) -> str:
             return "Microgrid not found"

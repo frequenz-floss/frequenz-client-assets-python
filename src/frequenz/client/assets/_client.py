@@ -55,7 +55,7 @@ class AssetsApiClient(BaseApiClient[assets_pb2_grpc.PlatformAssetsStub]):
         """
         if self._channel is None or self._stub is None:
             raise ClientNotConnected(server_url=self.server_url, operation="stub")
-        return self._stub  # type: ignore
+        return self._stub
 
     async def get_microgrid_details(  # noqa: DOC502 (raises ApiClientError indirectly)
         self, microgrid_id: int

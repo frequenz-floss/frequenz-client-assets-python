@@ -162,8 +162,8 @@ class Microgrid:
             location = Location.from_protobuf(pb.location)
 
         return Microgrid(
-            id=pb.id,
-            enterprise_id=pb.enterprise_id,
+            id=MicrogridId(pb.id),
+            enterprise_id=EnterpriseId(pb.enterprise_id),
             name=pb.name,
             delivery_area=delivery_area,
             location=location,
