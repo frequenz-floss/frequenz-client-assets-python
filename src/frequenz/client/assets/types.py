@@ -119,11 +119,11 @@ class Microgrid:
         Returns:
             A new Microgrid instance populated with data from the protobuf message.
         """
-        delivery_area: DeliveryArea = None
+        delivery_area: DeliveryArea | None = None
         if pb.HasField("delivery_area"):
             delivery_area = DeliveryArea.from_protobuf(pb.delivery_area)
 
-        location: Location = None
+        location: Location | None = None
         if pb.HasField("location"):
             location = Location.from_protobuf(pb.location)
 
