@@ -34,6 +34,7 @@ Environment Variables:
 
 import asyncio
 import json
+from dataclasses import asdict
 
 import asyncclick as click
 
@@ -54,7 +55,12 @@ def print_microgrid_details(microgrid: Microgrid) -> None:
     Args:
         microgrid: The Microgrid instance to print to console.
     """
-    click.echo(microgrid.to_json())
+    microgrid_dict = asdict(microgrid)
+    microgrid_dict["id"] = int(microgrid.id)
+    microgrid_dict["enterprise_id"] = int(microgrid.enterprise_id)
+    microgrid_dict["create_time"] = microgrid.create_time.isoformat()
+
+    click.echo(json.dumps(microgrid_dict, indent=2))
 
 
 @click.group(invoke_without_command=True)

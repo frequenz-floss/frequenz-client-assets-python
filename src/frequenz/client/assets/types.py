@@ -9,8 +9,7 @@ including data classes for representing assets, microgrids, and related entities
 
 from __future__ import annotations
 
-import json
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from datetime import datetime, timezone
 
 from frequenz.api.common.v1alpha8.grid.delivery_area_pb2 import (
@@ -136,12 +135,3 @@ class Microgrid:
             status=pb.status,
             create_time=pb.create_timestamp.ToDatetime().replace(tzinfo=timezone.utc),
         )
-
-    def to_json(self) -> str:
-        """Convert the Microgrid instance to a JSON string."""
-        microgrid_dict = asdict(self)
-        microgrid_dict["id"] = int(self.id)
-        microgrid_dict["enterprise_id"] = int(self.enterprise_id)
-        microgrid_dict["create_time"] = self.create_time.isoformat()
-
-        return json.dumps(microgrid_dict, indent=2)
