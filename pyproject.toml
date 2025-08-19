@@ -35,6 +35,9 @@ dependencies = [
 ]
 dynamic = ["version"]
 
+[project.scripts]
+assets-cli = "frequenz.client.assets.cli.__main__:main"
+
 [[project.authors]]
 name = "Frequenz Energy-as-a-Service GmbH"
 email = "floss@frequenz.com"

@@ -13,7 +13,7 @@ authentication via command-line arguments or environment variables.
 Example:
     ```bash
     # Basic usage with command-line arguments
-    python -m frequenz.client.assets \
+    assets-cli \
         --url "grpc://api.example.com:443" \
         --auth-key "your-key" \
         --sign-secret "your-secret" \
@@ -23,7 +23,7 @@ Example:
     export ASSETS_API_URL="grpc://api.example.com:5555"
     export ASSETS_API_AUTH_KEY="your-key"
     export ASSETS_API_SIGN_SECRET="your-secret"
-    python -m frequenz.client.assets microgrid 123
+    assets-cli microgrid 123
     ```
 
 Environment Variables:
@@ -147,10 +147,10 @@ async def get_microgrid(
     Example:
         ```bash
         # Get details for microgrid with ID 123
-        python -m frequenz.client.assets microgrid 123
+        assets-cli microgrid 123
 
         # Pipe output to jq for filtering
-        python -m frequenz.client.assets microgrid 123 | jq ".name"
+        assets-cli microgrid 123 | jq ".name"
         ```
     """
     try:
