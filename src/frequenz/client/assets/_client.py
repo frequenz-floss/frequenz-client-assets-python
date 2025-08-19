@@ -75,7 +75,7 @@ class AssetsApiClient(BaseApiClient[assets_pb2_grpc.PlatformAssetsStub]):
 
         Raises:
             ApiClientError: If there are any errors communicating with the Assets API,
-                most likely a subclass of [GrpcError][frequenz.client.assets.GrpcError].
+                most likely a subclass of [GrpcError][frequenz.client.base.exception.GrpcError].
         """
         request = assets_pb2.GetMicrogridRequest(microgrid_id=microgrid_id)
         response = await call_stub_method(
