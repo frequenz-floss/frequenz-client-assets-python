@@ -7,6 +7,8 @@ This module contains the core data types used by the Assets API client,
 including data classes for representing assets, microgrids, and related entities.
 """
 
+from __future__ import annotations
+
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Any, Optional
@@ -131,8 +133,8 @@ class Microgrid:
             A dictionary containing the microgrid details.
         """
         return {
-            "id": self.id,
-            "enterprise_id": self.enterprise_id,
+            "id": int(self.id),
+            "enterprise_id": int(self.enterprise_id),
             "name": self.name,
             "delivery_area": (
                 self.delivery_area.to_dict() if self.delivery_area else None

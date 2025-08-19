@@ -7,6 +7,8 @@ Assets API client.
 This module provides a client for the Assets API.
 """
 
+from __future__ import annotations
+
 from frequenz.api.assets.v1 import assets_pb2, assets_pb2_grpc
 from frequenz.client.base.client import BaseApiClient, call_stub_method
 
@@ -43,7 +45,7 @@ class AssetsApiClient(BaseApiClient[assets_pb2_grpc.PlatformAssetsStub]):
         )
 
     @property
-    def stub(self) -> assets_pb2_grpc.PlatformAssetsStub:
+    def stub(self) -> assets_pb2_grpc.PlatformAssetsAsyncStub:
         """
         The gRPC stub for the Assets API.
 

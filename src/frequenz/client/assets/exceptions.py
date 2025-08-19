@@ -6,6 +6,8 @@
 from frequenz.client.base.exception import (
     ApiClientError,
     ClientNotConnected,
+    DataLoss,
+    EntityAlreadyExists,
     EntityNotFound,
     GrpcError,
     InternalError,
@@ -27,6 +29,8 @@ from frequenz.client.base.exception import (
 __all__ = [
     "ApiClientError",
     "ClientNotConnected",
+    "DataLoss",
+    "EntityAlreadyExists",
     "EntityNotFound",
     "GrpcError",
     "InternalError",
