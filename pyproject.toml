@@ -132,7 +132,6 @@ check-yield-types = false
 arg-type-hints-in-docstring = false
 arg-type-hints-in-signature = true
 allow-init-docstring = true
-check-class-attributes = false
 
 [tool.pylint.similarities]
 ignore-comments = ['yes']
@@ -147,11 +146,13 @@ disable = [
   # disabled because it conflicts with isort
   "wrong-import-order",
   "ungrouped-imports",
-  # Checked by mypy (and pylint is very flaky checking these)
+  # pylint's unsubscriptable check is buggy and is not needed because
+  # it is a type-check, for which we already have mypy.
   "unsubscriptable-object",
+  # Checked by mypy
   "no-member",
-  "no-name-in-module",
   "possibly-used-before-assignment",
+  "no-name-in-module",
   # Checked by flake8
   "f-string-without-interpolation",
   "line-too-long",
@@ -163,7 +164,15 @@ disable = [
 ]
 
 [tool.pytest.ini_options]
-addopts = "-W=all -Werror -Wdefault::DeprecationWarning -Wdefault::PendingDeprecationWarning -vv"
+addopts = "-vv"
+filterwarnings = [
+  "error",
+  "once::DeprecationWarning",
+  "once::PendingDeprecationWarning",
+  # We use a raw string (single quote) to avoid the need to escape special
+  # chars as this is a regex
+  'ignore:Protobuf gencode version .*exactly one major version older.*:UserWarning',
+]
 testpaths = ["tests", "src"]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
