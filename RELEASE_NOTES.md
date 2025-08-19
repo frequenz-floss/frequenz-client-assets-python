@@ -8,7 +8,6 @@ This release introduces a complete Assets API client with CLI support for intera
 
 **Breaking Changes:**
 
-- Removed deprecated `delete_me` function
 - Added new required dependencies: `frequenz-api-assets`, `frequenz-api-common`, `frequenz-client-base`, `grpcio`
 
 **CLI Support:**

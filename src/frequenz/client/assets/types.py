@@ -9,9 +9,9 @@ including data classes for representing assets, microgrids, and related entities
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+import json
+from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
-from typing import Any, Optional
 
 from frequenz.api.common.v1alpha8.grid.delivery_area_pb2 import (
     DeliveryArea as PBDeliveryArea,
@@ -44,16 +44,10 @@ class DeliveryArea:
         Returns:
             A new DeliveryArea instance populated with data from the protobuf message.
         """
-        return DeliveryArea(code=pb.code, code_type=str(pb.code_type))
-
-    def to_dict(self) -> dict[str, Any]:
-        """
-        Convert the DeliveryArea instance to a dictionary.
-
-        Returns:
-            A dictionary containing the delivery area details.
-        """
-        return {"code": self.code, "code_type": self.code_type}
+        return DeliveryArea(
+            code=pb.code,
+            code_type=str(pb.code_type),
+        )
 
 
 @dataclass(frozen=True)
@@ -67,19 +61,6 @@ class Location:
     longitude: float
     country_code: str
 
-    def to_dict(self) -> dict[str, Any]:
-        """
-        Convert the Location instance to a dictionary.
-
-        Returns:
-            A dictionary containing the location details.
-        """
-        return {
-            "latitude": self.latitude,
-            "longitude": self.longitude,
-            "country_code": self.country_code,
-        }
-
     @staticmethod
     def from_protobuf(pb: PBLocation) -> "Location":
         """
@@ -92,7 +73,9 @@ class Location:
             A new Location instance populated with data from the protobuf message.
         """
         return Location(
-            latitude=pb.latitude, longitude=pb.longitude, country_code=pb.country_code
+            latitude=pb.latitude,
+            longitude=pb.longitude,
+            country_code=pb.country_code,
         )
 
 
@@ -120,29 +103,10 @@ class Microgrid:
     id: MicrogridId
     enterprise_id: EnterpriseId
     name: str
-    delivery_area: Optional[DeliveryArea]
-    location: Optional[Location]
+    delivery_area: DeliveryArea | None
+    location: Location | None
     status: int
     create_time: datetime
-
-    def to_dict(self) -> dict[str, Any]:
-        """
-        Convert the Microgrid instance to a dictionary.
-
-        Returns:
-            A dictionary containing the microgrid details.
-        """
-        return {
-            "id": int(self.id),
-            "enterprise_id": int(self.enterprise_id),
-            "name": self.name,
-            "delivery_area": (
-                self.delivery_area.to_dict() if self.delivery_area else None
-            ),
-            "location": self.location.to_dict() if self.location else None,
-            "status": self.status,
-            "create_time": self.create_time.isoformat() if self.create_time else None,
-        }
 
     @staticmethod
     def from_protobuf(pb: PBMicrogrid) -> "Microgrid":
@@ -155,11 +119,11 @@ class Microgrid:
         Returns:
             A new Microgrid instance populated with data from the protobuf message.
         """
-        delivery_area: Optional[DeliveryArea] = None
+        delivery_area: DeliveryArea = None
         if pb.HasField("delivery_area"):
             delivery_area = DeliveryArea.from_protobuf(pb.delivery_area)
 
-        location: Optional[Location] = None
+        location: Location = None
         if pb.HasField("location"):
             location = Location.from_protobuf(pb.location)
 
@@ -172,3 +136,12 @@ class Microgrid:
             status=pb.status,
             create_time=pb.create_timestamp.ToDatetime().replace(tzinfo=timezone.utc),
         )
+
+    def to_json(self) -> str:
+        """Convert the Microgrid instance to a JSON string."""
+        microgrid_dict = asdict(self)
+        microgrid_dict["id"] = int(self.id)
+        microgrid_dict["enterprise_id"] = int(self.enterprise_id)
+        microgrid_dict["create_time"] = self.create_time.isoformat()
+
+        return json.dumps(microgrid_dict, indent=2)

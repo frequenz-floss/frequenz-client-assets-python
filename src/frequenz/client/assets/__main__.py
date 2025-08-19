@@ -54,7 +54,7 @@ def print_microgrid_details(microgrid: Microgrid) -> None:
     Args:
         microgrid: The Microgrid instance to print to console.
     """
-    click.echo(json.dumps(microgrid.to_dict(), indent=2))
+    click.echo(microgrid.to_json())
 
 
 @click.group(invoke_without_command=True)

@@ -70,12 +70,3 @@ def client_setup() -> Iterator[ClientSetup]:
         mock_location=mock_location,
         mock_response=mock_response,
     )
-
-    # Cleanup: reset ALL mocks automatically
-    mock_stub.reset_mock()
-    mock_microgrid.reset_mock()
-    mock_delivery_area.reset_mock()
-    mock_location.reset_mock()
-    mock_response.reset_mock()
-    client._stub = None  # pylint: disable=protected-access
-    client._channel = None  # pylint: disable=protected-access
