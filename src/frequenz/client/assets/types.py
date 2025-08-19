@@ -59,7 +59,7 @@ class Location:
 
     latitude: float
     longitude: float
-    country_code: str
+    country_code: str | None
 
     @staticmethod
     def from_protobuf(pb: PBLocation) -> "Location":
