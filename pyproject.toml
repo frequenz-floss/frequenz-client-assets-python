@@ -26,15 +26,26 @@ classifiers = [
 ]
 requires-python = ">= 3.11, < 4"
 dependencies = [
-  "typing-extensions >= 4.12.2, < 5",
+  "typing-extensions >= 4.13.0, < 5",
+  "frequenz-api-assets @ git+https://github.com/frequenz-floss/frequenz-api-assets.git@v0.x.x",
+  "frequenz-api-common >= 0.8.0, < 1",
+  "frequenz-client-base >= 0.11.0, < 0.12.0",
+  "frequenz-client-common >= 0.3.2, < 0.4.0",
+  "grpcio >= 1.73.1, < 2"
 ]
 dynamic = ["version"]
+
+[project.scripts]
+assets-cli = "frequenz.client.assets.cli.__main__:main"
 
 [[project.authors]]
 name = "Frequenz Energy-as-a-Service GmbH"
 email = "floss@frequenz.com"
 
 [project.optional-dependencies]
+cli = [
+  "asyncclick == 8.1.8",
+]
 dev-flake8 = [
   "flake8 == 7.3.0",
   "flake8-docstrings == 1.7.0",
@@ -57,9 +68,10 @@ dev-mkdocs = [
 ]
 dev-mypy = [
   "mypy == 1.16.1",
+  "grpc-stubs == 1.53.0.6",
   "types-Markdown == 3.8.0.20250415",
   # For checking the noxfile, docs/ script, and tests
-  "frequenz-client-assets[dev-mkdocs,dev-noxfile,dev-pytest]",
+  "frequenz-client-assets[dev-mkdocs,dev-noxfile,dev-pytest,cli]",
 ]
 dev-noxfile = [
   "nox == 2025.5.1",
@@ -68,7 +80,7 @@ dev-noxfile = [
 dev-pylint = [
   # dev-pytest already defines a dependency to pylint because of the examples
   # For checking the noxfile, docs/ script, and tests
-  "frequenz-client-assets[dev-mkdocs,dev-noxfile,dev-pytest]",
+  "frequenz-client-assets[dev-mkdocs,dev-noxfile,dev-pytest,cli]",
 ]
 dev-pytest = [
   "pytest == 8.4.1",
@@ -101,7 +113,7 @@ src_paths = ["benchmarks", "examples", "src", "tests"]
 
 [tool.flake8]
 # We give some flexibility to go over 88, there are cases like long URLs or
-# code in documenation that have extra indentation. Black will still take care
+# code in documentation that have extra indentation. Black will still take care
 # of making everything that can be 88 wide, 88 wide.
 max-line-length = 100
 extend-ignore = [
