@@ -62,8 +62,7 @@ class Location:
 
     @staticmethod
     def from_protobuf(pb: PBLocation) -> "Location":
-        """
-        Create a Location instance from a protobuf message.
+        """Create a Location instance from a protobuf message.
 
         Args:
             pb: The protobuf Location message.
@@ -85,32 +84,32 @@ class Microgrid:
     A microgrid is a localized group of electricity sources and loads that normally
     operates connected to and synchronous with the traditional wide area electrical
     grid (macrogrid), but is able to disconnect from the grid and operate autonomously.
-
-    Attributes:
-        id: Unique identifier for the microgrid.
-        enterprise_id: ID of the enterprise that owns this microgrid.
-        name: Human-readable name for the microgrid.
-        delivery_area_code: Code identifying the delivery area.
-        delivery_area_code_type: Type of delivery area code.
-        latitude: Geographic latitude coordinate.
-        longitude: Geographic longitude coordinate.
-        country_code: ISO country code where the microgrid is located.
-        status: Current operational status of the microgrid.
-        create_time: Timestamp when the microgrid was created.
     """
 
     id: MicrogridId
+    """Unique identifier for the microgrid."""
+
     enterprise_id: EnterpriseId
+    """ID of the enterprise that owns this microgrid."""
+
     name: str
+    """Human-readable name for the microgrid."""
+
     delivery_area: DeliveryArea | None
+    """Delivery area served by the microgrid, if applicable."""
+
     location: Location | None
+    """Geographical location of the microgrid, if applicable."""
+
     status: int
+    """Current operational status of the microgrid, represented as an integer."""
+
     create_time: datetime
+    """Timestamp when the microgrid was created, in UTC."""
 
     @staticmethod
     def from_protobuf(pb: PBMicrogrid) -> "Microgrid":
-        """
-        Create a Microgrid instance from a protobuf message.
+        """Create a Microgrid instance from a protobuf message.
 
         Args:
             pb: The protobuf Microgrid message.
