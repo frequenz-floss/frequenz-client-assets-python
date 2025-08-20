@@ -62,8 +62,7 @@ class Location:
 
     @staticmethod
     def from_protobuf(pb: PBLocation) -> "Location":
-        """
-        Create a Location instance from a protobuf message.
+        """Create a Location instance from a protobuf message.
 
         Args:
             pb: The protobuf Location message.
@@ -106,11 +105,11 @@ class Microgrid:
     """Current operational status of the microgrid, represented as an integer."""
 
     create_time: datetime
+    """Timestamp when the microgrid was created, in UTC."""
 
     @staticmethod
     def from_protobuf(pb: PBMicrogrid) -> "Microgrid":
-        """
-        Create a Microgrid instance from a protobuf message.
+        """Create a Microgrid instance from a protobuf message.
 
         Args:
             pb: The protobuf Microgrid message.
