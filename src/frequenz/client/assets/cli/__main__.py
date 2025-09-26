@@ -34,33 +34,13 @@ Environment Variables:
 
 import asyncio
 import json
-from dataclasses import asdict
 
 import asyncclick as click
 
 from frequenz.client.assets._client import AssetsApiClient
 from frequenz.client.assets.exceptions import ApiClientError
-from frequenz.client.assets.types import Microgrid
 
-
-def print_microgrid_details(microgrid: Microgrid) -> None:
-    """
-    Print microgrid details to console in JSON format.
-
-    This function converts the Microgrid instance to a dictionary and
-    outputs it as formatted JSON to the console. The output is designed
-    to be machine-readable and can be piped to tools like jq for further
-    processing.
-
-    Args:
-        microgrid: The Microgrid instance to print to console.
-    """
-    microgrid_dict = asdict(microgrid)
-    microgrid_dict["id"] = int(microgrid.id)
-    microgrid_dict["enterprise_id"] = int(microgrid.enterprise_id)
-    microgrid_dict["create_time"] = microgrid.create_time.isoformat()
-
-    click.echo(json.dumps(microgrid_dict, indent=2))
+from ._utils import print_electrical_components, print_microgrid_details
 
 
 @click.group(invoke_without_command=True)
@@ -161,8 +141,55 @@ async def get_microgrid(
     """
     try:
         client = ctx.obj["client"]
-        microgrid_details = await client.get_microgrid_details(microgrid_id)
+        microgrid_details = await client.get_microgrid(microgrid_id)
         print_microgrid_details(microgrid_details)
+    except ApiClientError as e:
+        error_dict = {
+            "error_type": type(e).__name__,
+            "server_url": e.server_url,
+            "operation": e.operation,
+            "description": e.description,
+        }
+        click.echo(json.dumps(error_dict, indent=2))
+        raise click.Abort()
+
+
+@cli.command("electrical-components")
+@click.pass_context
+@click.argument("microgrid-id", required=True, type=int)
+async def list_microgrid_electrical_components(
+    ctx: click.Context,
+    microgrid_id: int,
+) -> None:
+    """
+    Get and display electrical components by microgrid ID.
+
+    This command fetches detailed information about all electrical components
+    in a specific microgrid from the Assets API and displays it in JSON format.
+    The output can be piped to other tools for further processing.
+
+    Args:
+        ctx: Click context object containing the initialized API client.
+        microgrid_id: The unique identifier of the microgrid to retrieve.
+
+    Raises:
+        click.Abort: If there is an error printing the electrical components.
+
+    Example:
+        ```bash
+        # Get details for microgrid with ID 123
+        assets-cli electrical-components 123
+
+        # Pipe output to jq for filtering
+        assets-cli electrical-components 123 | jq ".id"
+        ```
+    """
+    try:
+        client = ctx.obj["client"]
+        electrical_components = await client.list_microgrid_electrical_components(
+            microgrid_id
+        )
+        print_electrical_components(electrical_components)
     except ApiClientError as e:
         error_dict = {
             "error_type": type(e).__name__,

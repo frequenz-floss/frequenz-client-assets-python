@@ -42,22 +42,22 @@ class AssetsJSONEncoder(json.JSONEncoder):
 
         return super().default(o)
 
-    def _encode(self, o: Any) -> Any:
+    def _encode_containers_recursively(self, o: Any) -> Any:
         """Recursively process objects to convert enum keys to their values."""
         if isinstance(o, dict):
             return {
                 (
-                    self._encode(key.value)
+                    self._encode_containers_recursively(key.value)
                     if isinstance(key, enum.Enum)
-                    else self._encode(key)
-                ): self._encode(value)
+                    else self._encode_containers_recursively(key)
+                ): self._encode_containers_recursively(value)
                 for key, value in o.items()
             }
-        if isinstance(o, (list, tuple, set, frozenset)):
-            items = [self._encode(item) for item in o]
+        elif isinstance(o, (list, tuple, set, frozenset)):
+            items = [self._encode_containers_recursively(item) for item in o]
             return items if isinstance(o, (list, tuple)) else items
         return o
 
     def encode(self, o: Any) -> str:
         """Encode the given object to a JSON string, handling enum keys."""
-        return super().encode(self._encode(o))
+        return super().encode(self._encode_containers_recursively(o))

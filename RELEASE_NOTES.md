@@ -2,43 +2,24 @@
 
 ## Summary
 
-This release introduces a complete Assets API client with CLI support for interacting with Frequenz microgrid assets, including comprehensive error handling and type safety.
-
-## Upgrading
-
-**Breaking Changes:**
-
-- Added new required dependencies: `frequenz-api-assets`, `frequenz-api-common`, `frequenz-client-base`, `grpcio`
-
-**CLI Support:**
-Install with `pip install "frequenz-client-assets[cli]"` for command-line functionality.
+This release introduces a Assets API client with CLI support for interacting with Frequenz microgrid assets. It provides comprehensive electrical components functionality including batteries, EV chargers, inverters, and grid connection points, with enhanced type safety and error handling.
 
 ## New Features
 
-**Assets API Client:**
+* **Assets API Client**:
+  * `list_electrical_components()` method for retrieving electrical components in a microgrid
 
-- Complete gRPC client for Frequenz Assets API
-- Extends `BaseApiClient` for authentication and connection management
-- `get_microgrid_details()` method for retrieving microgrid information
+* **Electrical Components Support**: Comprehensive data classes for electrical components
+  * `ElectricalComponent` with category-specific information for batteries, EV chargers, inverters, grid connection points, and power transformers
+  * Battery types: Li-ion, Na-ion with proper enum mapping
+  * EV charger types: AC, DC, Hybrid charging support
+  * Operational lifetime tracking and metric configuration bounds
 
-**Command-Line Interface:**
+* **Command-Line Interface**:
+  * `assets-cli electrical-components <microgrid-id>` command
 
-- `python -m frequenz.client.assets microgrid <id>` command
-- Environment variable support for API credentials
-- JSON output formatting
-
-**Type System:**
-
-- `Microgrid`, `DeliveryArea`, and `Location` data classes
-- Protobuf integration with proper type safety
-
-**Exception Handling:**
-
-- Custom exception hierarchy (`AssetsApiError`, `NotFoundError`, `AuthenticationError`, `ServiceUnavailableError`)
-- JSON serialization support for error responses
+* **Type System**: Enhanced data classes with protobuf integration
+  * `Microgrid`, `DeliveryArea`, `Location`, and comprehensive electrical component types
+  * Proper enum mapping: `BatteryType`, `EvChargerType`, `InverterType`, `Metric`
 
 ## Bug Fixes
-
-- Improved dependency management with optional dependency groups
-- Enhanced gRPC error handling and type safety
-- Cleaned up deprecated code
