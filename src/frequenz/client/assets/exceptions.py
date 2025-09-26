@@ -47,4 +47,5 @@ __all__ = [
     "ServiceUnavailable",
     "UnknownError",
     "UnrecognizedGrpcStatus",
+    "PermissionDenied",
 ]
