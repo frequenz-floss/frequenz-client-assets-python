@@ -53,7 +53,7 @@ class AssetsJSONEncoder(json.JSONEncoder):
                 ): self._encode_containers_recursively(value)
                 for key, value in o.items()
             }
-        elif isinstance(o, (list, tuple, set, frozenset)):
+        if isinstance(o, (list, tuple, set, frozenset)):
             items = [self._encode_containers_recursively(item) for item in o]
             return items if isinstance(o, (list, tuple)) else items
         return o
