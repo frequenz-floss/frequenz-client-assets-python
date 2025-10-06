@@ -2,24 +2,16 @@
 
 ## Summary
 
-This release introduces a Assets API client with CLI support for interacting with Frequenz microgrid assets. It provides comprehensive electrical components functionality including batteries, EV chargers, inverters, and grid connection points, with enhanced type safety and error handling.
+<!-- Here goes a general summary of what this release is about -->
+
+## Upgrading
+
+<!-- Here goes notes on how to upgrade from previous versions, including deprecations and what they should be replaced with -->
 
 ## New Features
 
-* **Assets API Client**:
-  * `list_electrical_components()` method for retrieving electrical components in a microgrid
-
-* **Electrical Components Support**: Comprehensive data classes for electrical components
-  * `ElectricalComponent` with category-specific information for batteries, EV chargers, inverters, grid connection points, and power transformers
-  * Battery types: Li-ion, Na-ion with proper enum mapping
-  * EV charger types: AC, DC, Hybrid charging support
-  * Operational lifetime tracking and metric configuration bounds
-
-* **Command-Line Interface**:
-  * `assets-cli electrical-components <microgrid-id>` command
-
-* **Type System**: Enhanced data classes with protobuf integration
-  * `Microgrid`, `DeliveryArea`, `Location`, and comprehensive electrical component types
-  * Proper enum mapping: `BatteryType`, `EvChargerType`, `InverterType`, `Metric`
+<!-- Here goes the main new features and examples or instructions on how to use them -->
 
 ## Bug Fixes
+
+<!-- Here goes notable bug fixes that are worth a special mention or explanation -->
