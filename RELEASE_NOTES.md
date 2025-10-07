@@ -2,24 +2,35 @@
 
 ## Summary
 
-This release introduces a Assets API client with CLI support for interacting with Frequenz microgrid assets. It provides comprehensive electrical components functionality including batteries, EV chargers, inverters, and grid connection points, with enhanced type safety and error handling.
+This release updates the `frequenz-api-assets` dependency to use a version range instead of a specific Git reference, providing more flexibility for dependency updates while maintaining compatibility.
 
-## New Features
+## Changes
 
-* **Assets API Client**:
-  * `list_electrical_components()` method for retrieving electrical components in a microgrid
+### Dependency Updates
 
-* **Electrical Components Support**: Comprehensive data classes for electrical components
-  * `ElectricalComponent` with category-specific information for batteries, EV chargers, inverters, grid connection points, and power transformers
-  * Battery types: Li-ion, Na-ion with proper enum mapping
-  * EV charger types: AC, DC, Hybrid charging support
-  * Operational lifetime tracking and metric configuration bounds
+* **Updated `frequenz-api-assets` dependency**:
+  * Changed from Git reference (`@ git+https://github.com/frequenz-floss/frequenz-api-assets.git@v0.x.x`) to version range (`>= 0.1.0, < 0.2.0`)
+  * Enables automatic updates within the specified version range
+  * Maintains backward compatibility while reducing maintenance overhead
 
-* **Command-Line Interface**:
-  * `assets-cli electrical-components <microgrid-id>` command
+## Benefits
 
-* **Type System**: Enhanced data classes with protobuf integration
-  * `Microgrid`, `DeliveryArea`, `Location`, and comprehensive electrical component types
-  * Proper enum mapping: `BatteryType`, `EvChargerType`, `InverterType`, `Metric`
+* **Improved dependency management**: Version ranges allow for automatic updates within the specified range
+* **Better compatibility**: Ensures compatibility with the project while allowing for patch and minor version updates
+* **Reduced maintenance overhead**: Eliminates the need to manually update Git references for compatible versions
 
-## Bug Fixes
+## Migration Notes
+
+No migration required. This is a transparent dependency update that maintains full backward compatibility.
+
+## Files Changed
+
+* `pyproject.toml`: Updated the `frequenz-api-assets` dependency specification
+
+## Type of Change
+
+* [x] Dependency update
+* [ ] Bug fix
+* [ ] New feature
+* [ ] Breaking change
+* [ ] Documentation update
