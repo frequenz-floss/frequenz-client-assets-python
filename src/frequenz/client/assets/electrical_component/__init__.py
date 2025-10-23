@@ -14,6 +14,7 @@ from ._breaker import Breaker
 from ._capacitor_bank import CapacitorBank
 from ._category import ElectricalComponentCategory
 from ._chp import Chp
+from ._connection import ComponentConnection
 from ._converter import Converter
 from ._crypto_miner import CryptoMiner
 from ._electrical_component import ElectricalComponent
@@ -87,4 +88,5 @@ __all__ = [
     "StaticTransferSwitch",
     "UninterruptiblePowerSupply",
     "WindTurbine",
+    "ComponentConnection",
 ]

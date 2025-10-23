@@ -13,7 +13,7 @@ class Lifetime:
     """An active operational period of a microgrid asset.
 
     Warning:
-        The [`end`][frequenz.client.microgrid.Lifetime.end] timestamp indicates that the
+        The [`end`][frequenz.client.assets.Lifetime.end] timestamp indicates that the
         asset has been permanently removed from the system.
     """
 
@@ -21,7 +21,7 @@ class Lifetime:
     """The moment when the asset became operationally active.
 
     If `None`, the asset is considered to be active in any past moment previous to the
-    [`end`][frequenz.client.microgrid.Lifetime.end].
+    [`end`][frequenz.client.assets.Lifetime.end].
     """
 
     end: datetime | None = None
