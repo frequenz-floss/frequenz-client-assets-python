@@ -13,12 +13,11 @@ from frequenz.api.assets.v1 import assets_pb2, assets_pb2_grpc
 from frequenz.client.base import channel
 from frequenz.client.base.client import BaseApiClient, call_stub_method
 
-from frequenz.client.assets.electrical_component._electrical_component import (
-    ElectricalComponent,
-)
-
 from ._microgrid import Microgrid
 from ._microgrid_proto import microgrid_from_proto
+from .electrical_component._connection import ComponentConnection
+from .electrical_component._connection_proto import component_connection_from_proto
+from .electrical_component._electrical_component import ElectricalComponent
 from .electrical_component._electrical_component_proto import electrical_component_proto
 from .exceptions import ClientNotConnected
 
@@ -137,4 +136,48 @@ class AssetsApiClient(
 
         return [
             electrical_component_proto(component) for component in response.components
+        ]
+
+    async def list_microgrid_electrical_component_connections(
+        self,
+        microgrid_id: int,
+        source_component_ids: list[int] | None = None,
+        destination_component_ids: list[int] | None = None,
+    ) -> list[ComponentConnection | None]:
+        """
+        Get the electrical component connections of a microgrid.
+
+        Args:
+            microgrid_id: The ID of the microgrid to get the electrical
+                component connections of.
+            source_component_ids: Only return connections that originate from
+                these component IDs. If None or empty, no filtering is applied.
+            destination_component_ids: Only return connections that terminate at
+                these component IDs. If None or empty, no filtering is applied.
+
+        Returns:
+            The electrical component connections of the microgrid.
+        """
+        request = assets_pb2.ListMicrogridElectricalComponentConnectionsRequest(
+            microgrid_id=microgrid_id,
+        )
+
+        if source_component_ids:
+            request.source_component_ids.extend(source_component_ids)
+
+        if destination_component_ids:
+            request.destination_component_ids.extend(destination_component_ids)
+
+        response = await call_stub_method(
+            self,
+            lambda: self.stub.ListMicrogridElectricalComponentConnections(
+                request,
+                timeout=DEFAULT_GRPC_CALL_TIMEOUT,
+            ),
+            method_name="ListMicrogridElectricalComponentConnections",
+        )
+
+        return [
+            component_connection_from_proto(connection)
+            for connection in response.connections
         ]
