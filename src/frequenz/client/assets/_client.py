@@ -9,6 +9,8 @@ This module provides a client for the Assets API.
 
 from __future__ import annotations
 
+from collections.abc import Iterable
+
 from frequenz.api.assets.v1 import assets_pb2, assets_pb2_grpc
 from frequenz.client.base import channel
 from frequenz.client.base.client import BaseApiClient, call_stub_method
@@ -141,8 +143,8 @@ class AssetsApiClient(
     async def list_microgrid_electrical_component_connections(
         self,
         microgrid_id: int,
-        source_component_ids: list[int] | None = None,
-        destination_component_ids: list[int] | None = None,
+        source_component_ids: Iterable[int] = (),
+        destination_component_ids: Iterable[int] = (),
     ) -> list[ComponentConnection | None]:
         """
         Get the electrical component connections of a microgrid.
@@ -160,13 +162,9 @@ class AssetsApiClient(
         """
         request = assets_pb2.ListMicrogridElectricalComponentConnectionsRequest(
             microgrid_id=microgrid_id,
+            source_component_ids=source_component_ids,
+            destination_component_ids=destination_component_ids,
         )
-
-        if source_component_ids:
-            request.source_component_ids.extend(source_component_ids)
-
-        if destination_component_ids:
-            request.destination_component_ids.extend(destination_component_ids)
 
         response = await call_stub_method(
             self,
