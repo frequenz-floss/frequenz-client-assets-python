@@ -175,7 +175,9 @@ class AssetsApiClient(
             method_name="ListMicrogridElectricalComponentConnections",
         )
 
-        return [
-            component_connection_from_proto(connection)
-            for connection in response.connections
-        ]
+        return list(
+            map(
+                component_connection_from_proto,
+                filter(bool, response.connections),
+            )
+        )
