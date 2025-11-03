@@ -25,7 +25,7 @@ def component_connection_from_proto(
     minor_issues: list[str] = []
 
     connection = component_connection_from_proto_with_issues(
-        message, major_issues=major_issues, minor_issues=minor_issues
+        message, major_issues=major_issues
     )
 
     if major_issues:
@@ -48,7 +48,6 @@ def component_connection_from_proto_with_issues(
     message: electrical_components_pb2.ElectricalComponentConnection,
     *,
     major_issues: list[str],
-    minor_issues: list[str],
 ) -> ComponentConnection | None:
     """Create a `ComponentConnection` from a protobuf message collecting issues.
 
@@ -58,7 +57,6 @@ def component_connection_from_proto_with_issues(
     Args:
         message: The protobuf message to parse.
         major_issues: A list to collect major issues found during parsing.
-        minor_issues: A list to collect minor issues found during parsing.
 
     Returns:
         A `ComponentConnection` object created from the protobuf message, or
@@ -73,9 +71,11 @@ def component_connection_from_proto_with_issues(
         )
         return None
 
-    lifetime = _get_operational_lifetime_from_proto(
-        message, major_issues=major_issues, minor_issues=minor_issues
-    )
+    try:
+        lifetime = _get_operational_lifetime_from_proto(message)
+    except ValueError as exc:
+        major_issues.append(f"connection ignored: invalid operational lifetime ({exc})")
+        return None
 
     return ComponentConnection(
         source=source_component_id,
@@ -86,21 +86,8 @@ def component_connection_from_proto_with_issues(
 
 def _get_operational_lifetime_from_proto(
     message: electrical_components_pb2.ElectricalComponentConnection,
-    *,
-    major_issues: list[str],
-    minor_issues: list[str],
 ) -> Lifetime:
     """Get the operational lifetime from a protobuf message."""
     if message.HasField("operational_lifetime"):
-        try:
-            return lifetime_from_proto(message.operational_lifetime)
-        except ValueError as exc:
-            major_issues.append(
-                f"invalid operational lifetime ({exc}), considering it as missing "
-                "(i.e. always operational)",
-            )
-    else:
-        minor_issues.append(
-            "missing operational lifetime, considering it always operational",
-        )
+        return lifetime_from_proto(message.operational_lifetime)
     return Lifetime()

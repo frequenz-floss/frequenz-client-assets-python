@@ -274,14 +274,8 @@ async def list_microgrid_electrical_component_connections(
         component_connections = (
             await client.list_microgrid_electrical_component_connections(
                 microgrid_id,
-                source_component_ids=(
-                    list(source_component_ids) if source_component_ids else None
-                ),
-                destination_component_ids=(
-                    list(destination_component_ids)
-                    if destination_component_ids
-                    else None
-                ),
+                source_component_ids=source_component_ids,
+                destination_component_ids=destination_component_ids,
             )
         )
         print_component_connections(component_connections)
