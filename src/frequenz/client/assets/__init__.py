@@ -5,6 +5,7 @@
 
 from ._client import AssetsApiClient
 from ._delivery_area import DeliveryArea, EnergyMarketCodeType
+from ._lifetime import Lifetime
 from ._location import Location
 from ._microgrid import Microgrid, MicrogridStatus
 
@@ -15,4 +16,5 @@ __all__ = [
     "Microgrid",
     "MicrogridStatus",
     "Location",
+    "Lifetime",
 ]

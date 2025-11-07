@@ -4,6 +4,10 @@ import asyncclick as click
 
 from frequenz.client.assets._microgrid import Microgrid
 from frequenz.client.assets._microgrid_json import microgrid_to_json
+from frequenz.client.assets.electrical_component._connection import ComponentConnection
+from frequenz.client.assets.electrical_component._connection_json import (
+    component_connections_to_json,
+)
 from frequenz.client.assets.electrical_component._electrical_component import (
     ElectricalComponent,
 )
@@ -42,3 +46,17 @@ def print_electrical_components(
         electrical_components: The list of ElectricalComponent instances to print to console.
     """
     click.echo(electrical_components_to_json(electrical_components))
+
+
+def print_component_connections(
+    component_connections: list[ComponentConnection],
+) -> None:
+    """
+    Print electrical component connections to console in JSON format using custom encoder.
+
+    This function converts the ComponentConnection instances to JSON using a custom
+    encoder and outputs it as formatted JSON to the console. The output is
+    designed to be machine-readable and can be piped to tools like jq for
+    further processing.
+    """
+    click.echo(component_connections_to_json(component_connections))

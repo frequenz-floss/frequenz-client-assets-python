@@ -40,7 +40,11 @@ import asyncclick as click
 from frequenz.client.assets._client import AssetsApiClient
 from frequenz.client.assets.exceptions import ApiClientError
 
-from ._utils import print_electrical_components, print_microgrid_details
+from ._utils import (
+    print_component_connections,
+    print_electrical_components,
+    print_microgrid_details,
+)
 
 
 @click.group(invoke_without_command=True)
@@ -190,6 +194,91 @@ async def list_microgrid_electrical_components(
             microgrid_id
         )
         print_electrical_components(electrical_components)
+    except ApiClientError as e:
+        error_dict = {
+            "error_type": type(e).__name__,
+            "server_url": e.server_url,
+            "operation": e.operation,
+            "description": e.description,
+        }
+        click.echo(json.dumps(error_dict, indent=2))
+        raise click.Abort()
+
+
+@cli.command("component-connections")
+@click.pass_context
+@click.argument("microgrid-id", required=True, type=int)
+@click.option(
+    "--source",
+    "source_component_ids",
+    help="Filter connections by source component ID(s). Can be specified multiple times.",
+    type=int,
+    multiple=True,
+    required=False,
+)
+@click.option(
+    "--destination",
+    "destination_component_ids",
+    help="Filter connections by destination component ID(s). Can be specified multiple times.",
+    type=int,
+    multiple=True,
+    required=False,
+)
+async def list_microgrid_electrical_component_connections(
+    ctx: click.Context,
+    microgrid_id: int,
+    source_component_ids: tuple[int, ...],
+    destination_component_ids: tuple[int, ...],
+) -> None:
+    """
+    Get and display electrical component connections by microgrid ID.
+
+    This command fetches detailed information about all electrical component connections
+    in a specific microgrid from the Assets API and displays it in JSON format.
+    The output can be piped to other tools for further processing.
+
+    Args:
+        ctx: Click context object containing the initialized API client.
+        microgrid_id: The unique identifier of the microgrid to retrieve.
+        source_component_ids: Optional filter for connections from specific
+            source component IDs.
+        destination_component_ids: Optional filter for connections to specific
+            destination component IDs.
+
+    Raises:
+        click.Abort: If there is an error printing the electrical component connections.
+
+    Example:
+        ```bash
+        # Get all connections for microgrid with ID 123
+        assets-cli component-connections 123
+
+        # Filter by source component
+        assets-cli component-connections 123 --source 5
+
+        # Filter by destination component
+        assets-cli component-connections 123 --destination 10
+
+        # Filter by both source and destination
+        assets-cli component-connections 123 --source 5 --destination 10
+
+        # Filter by multiple source components
+        assets-cli component-connections 123 --source 5 --source 6 --source 7
+
+        # Pipe output to jq for filtering
+        assets-cli component-connections 123 | jq ".[]"
+        ```
+    """
+    try:
+        client = ctx.obj["client"]
+        component_connections = (
+            await client.list_microgrid_electrical_component_connections(
+                microgrid_id,
+                source_component_ids=source_component_ids,
+                destination_component_ids=destination_component_ids,
+            )
+        )
+        print_component_connections(component_connections)
     except ApiClientError as e:
         error_dict = {
             "error_type": type(e).__name__,
