@@ -14,6 +14,7 @@ from collections.abc import Iterable
 from frequenz.api.assets.v1 import assets_pb2, assets_pb2_grpc
 from frequenz.client.base import channel
 from frequenz.client.base.client import BaseApiClient, call_stub_method
+from frequenz.client.common.microgrid import MicrogridId
 
 from ._microgrid import Microgrid
 from ._microgrid_proto import microgrid_from_proto
@@ -87,7 +88,7 @@ class AssetsApiClient(
         return self._stub  # type: ignore
 
     async def get_microgrid(  # noqa: DOC502 (raises ApiClientError indirectly)
-        self, microgrid_id: int
+        self, microgrid_id: MicrogridId
     ) -> Microgrid:
         """
         Get the details of a microgrid.
@@ -105,7 +106,7 @@ class AssetsApiClient(
         response = await call_stub_method(
             self,
             lambda: self.stub.GetMicrogrid(
-                assets_pb2.GetMicrogridRequest(microgrid_id=microgrid_id),
+                assets_pb2.GetMicrogridRequest(microgrid_id=int(microgrid_id)),
                 timeout=DEFAULT_GRPC_CALL_TIMEOUT,
             ),
             method_name="GetMicrogrid",
@@ -114,7 +115,7 @@ class AssetsApiClient(
         return microgrid_from_proto(response.microgrid)
 
     async def list_microgrid_electrical_components(
-        self, microgrid_id: int
+        self, microgrid_id: MicrogridId
     ) -> list[ElectricalComponent]:
         """
         Get the electrical components of a microgrid.
@@ -129,7 +130,7 @@ class AssetsApiClient(
             self,
             lambda: self.stub.ListMicrogridElectricalComponents(
                 assets_pb2.ListMicrogridElectricalComponentsRequest(
-                    microgrid_id=microgrid_id,
+                    microgrid_id=int(microgrid_id),
                 ),
                 timeout=DEFAULT_GRPC_CALL_TIMEOUT,
             ),
@@ -142,7 +143,7 @@ class AssetsApiClient(
 
     async def list_microgrid_electrical_component_connections(
         self,
-        microgrid_id: int,
+        microgrid_id: MicrogridId,
         source_component_ids: Iterable[int] = (),
         destination_component_ids: Iterable[int] = (),
     ) -> list[ComponentConnection | None]:
@@ -161,7 +162,7 @@ class AssetsApiClient(
             The electrical component connections of the microgrid.
         """
         request = assets_pb2.ListMicrogridElectricalComponentConnectionsRequest(
-            microgrid_id=microgrid_id,
+            microgrid_id=int(microgrid_id),
             source_component_ids=source_component_ids,
             destination_component_ids=destination_component_ids,
         )
