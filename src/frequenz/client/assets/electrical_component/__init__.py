@@ -36,7 +36,7 @@ from ._inverter import (
     HybridInverter,
     Inverter,
     InverterType,
-    PvInverter,
+    SolarInverter,
     UnrecognizedInverter,
     UnspecifiedInverter,
 )
@@ -81,7 +81,7 @@ __all__ = [
     "HybridInverter",
     "Inverter",
     "InverterType",
-    "PvInverter",
+    "SolarInverter",
     "UnrecognizedInverter",
     "UnspecifiedInverter",
     "Meter",
