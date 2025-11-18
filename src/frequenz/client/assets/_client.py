@@ -15,6 +15,7 @@ from frequenz.api.assets.v1 import assets_pb2, assets_pb2_grpc
 from frequenz.client.base import channel
 from frequenz.client.base.client import BaseApiClient, call_stub_method
 from frequenz.client.common.microgrid import MicrogridId
+from frequenz.client.common.microgrid.electrical_components import ElectricalComponentId
 
 from ._microgrid import Microgrid
 from ._microgrid_proto import microgrid_from_proto
@@ -144,8 +145,8 @@ class AssetsApiClient(
     async def list_microgrid_electrical_component_connections(
         self,
         microgrid_id: MicrogridId,
-        source_component_ids: Iterable[int] = (),
-        destination_component_ids: Iterable[int] = (),
+        source_component_ids: Iterable[ElectricalComponentId] = (),
+        destination_component_ids: Iterable[ElectricalComponentId] = (),
     ) -> list[ComponentConnection | None]:
         """
         Get the electrical component connections of a microgrid.
@@ -163,8 +164,8 @@ class AssetsApiClient(
         """
         request = assets_pb2.ListMicrogridElectricalComponentConnectionsRequest(
             microgrid_id=int(microgrid_id),
-            source_component_ids=source_component_ids,
-            destination_component_ids=destination_component_ids,
+            source_component_ids=(int(c) for c in source_component_ids),
+            destination_component_ids=(int(c) for c in destination_component_ids),
         )
 
         response = await call_stub_method(
