@@ -6,9 +6,12 @@ This release adds support for retrieving microgrid electrical component connecti
 
 ## Upgrading
 
-No migration required. This is a backward-compatible feature addition.
+- The `get_microgrid` and `list_microgrid_electrical_components` methods now expect an argument of type `MicrogridId`, instead of an `int`.
+- The `PvInverter` type has been renamed to `SolarInverter`, to be compatible with the microgrid api client.
 
 ## New Features
+
+- This exposes the abstract `Battery`, `EvCharger` and `Inverter` types.
 
 ### Component Connections API
 
