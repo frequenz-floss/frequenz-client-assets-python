@@ -2,16 +2,20 @@
 
 ## Summary
 
-<!-- Here goes a general summary of what this release is about -->
+This release adds support for retrieving microgrid electrical component connections through a new client method and CLI command.
 
 ## Upgrading
 
-<!-- Here goes notes on how to upgrade from previous versions, including deprecations and what they should be replaced with -->
+No migration required. This is a backward-compatible feature addition.
 
 ## New Features
 
-<!-- Here goes the main new features and examples or instructions on how to use them -->
+### Component Connections API
+
+* **New `ComponentConnection` class**: Introduced to represent connections between electrical components in a microgrid
+* **New client method**: Added method to retrieve microgrid electrical component connections
+* **CLI command extension**: Added `component-connections` command to list component connections
 
 ## Bug Fixes
 
-<!-- Here goes notable bug fixes that are worth a special mention or explanation -->
+<!-- No bug fixes in this release -->
