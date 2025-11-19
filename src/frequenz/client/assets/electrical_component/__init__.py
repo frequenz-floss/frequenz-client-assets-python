@@ -4,6 +4,7 @@
 """Electrical component types."""
 
 from ._battery import (
+    Battery,
     BatteryType,
     LiIonBattery,
     NaIonBattery,
@@ -22,6 +23,7 @@ from ._electrolyzer import Electrolyzer
 from ._ev_charger import (
     AcEvCharger,
     DcEvCharger,
+    EvCharger,
     EvChargerType,
     HybridEvCharger,
     UnrecognizedEvCharger,
@@ -32,8 +34,9 @@ from ._hvac import Hvac
 from ._inverter import (
     BatteryInverter,
     HybridInverter,
+    Inverter,
     InverterType,
-    PvInverter,
+    SolarInverter,
     UnrecognizedInverter,
     UnspecifiedInverter,
 )
@@ -53,6 +56,7 @@ from ._wind_turbine import WindTurbine
 __all__ = [
     "Chp",
     "CryptoMiner",
+    "Battery",
     "BatteryType",
     "LiIonBattery",
     "NaIonBattery",
@@ -66,6 +70,7 @@ __all__ = [
     "Electrolyzer",
     "AcEvCharger",
     "DcEvCharger",
+    "EvCharger",
     "EvChargerType",
     "HybridEvCharger",
     "UnrecognizedEvCharger",
@@ -74,8 +79,9 @@ __all__ = [
     "Hvac",
     "BatteryInverter",
     "HybridInverter",
+    "Inverter",
     "InverterType",
-    "PvInverter",
+    "SolarInverter",
     "UnrecognizedInverter",
     "UnspecifiedInverter",
     "Meter",

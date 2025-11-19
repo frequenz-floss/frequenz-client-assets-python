@@ -25,7 +25,7 @@ class InverterType(enum.Enum):
     BATTERY = electrical_components_pb2.INVERTER_TYPE_BATTERY
     """The inverter is a battery inverter."""
 
-    PV = electrical_components_pb2.INVERTER_TYPE_PV
+    SOLAR = electrical_components_pb2.INVERTER_TYPE_PV
     """The inverter is a solar inverter."""
 
     HYBRID = electrical_components_pb2.INVERTER_TYPE_HYBRID
@@ -106,10 +106,10 @@ class BatteryInverter(Inverter):
 
 
 @dataclasses.dataclass(frozen=True, kw_only=True)
-class PvInverter(Inverter):
-    """A PV inverter."""
+class SolarInverter(Inverter):
+    """A Solar inverter."""
 
-    type: Literal[InverterType.PV] = InverterType.PV
+    type: Literal[InverterType.SOLAR] = InverterType.SOLAR
     """The type of this inverter.
 
     Note:
@@ -150,7 +150,7 @@ class UnrecognizedInverter(Inverter):
 InverterTypes: TypeAlias = (
     UnspecifiedInverter
     | BatteryInverter
-    | PvInverter
+    | SolarInverter
     | HybridInverter
     | UnrecognizedInverter
 )

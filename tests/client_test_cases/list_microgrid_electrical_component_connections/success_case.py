@@ -12,7 +12,7 @@ from frequenz.api.common.v1alpha8.microgrid.electrical_components import (
     electrical_components_pb2,
 )
 from frequenz.client.base.conversion import to_timestamp
-from frequenz.client.common.microgrid.components import ComponentId
+from frequenz.client.common.microgrid.electrical_components import ElectricalComponentId
 
 from frequenz.client.assets import Lifetime
 from frequenz.client.assets.electrical_component import ComponentConnection
@@ -50,12 +50,12 @@ def assert_client_result(actual_result: Any) -> None:
     """Assert that the client result matches the expected connections list."""
     assert list(actual_result) == [
         ComponentConnection(
-            source=ComponentId(1),
-            destination=ComponentId(2),
+            source=ElectricalComponentId(1),
+            destination=ElectricalComponentId(2),
         ),
         ComponentConnection(
-            source=ComponentId(2),
-            destination=ComponentId(3),
+            source=ElectricalComponentId(2),
+            destination=ElectricalComponentId(3),
             operational_lifetime=Lifetime(start=lifetime_start),
         ),
     ]
