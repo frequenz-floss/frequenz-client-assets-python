@@ -89,13 +89,20 @@ class AssetsApiClient(
         return self._stub  # type: ignore
 
     async def get_microgrid(  # noqa: DOC502 (raises ApiClientError indirectly)
-        self, microgrid_id: MicrogridId
+        self,
+        microgrid_id: MicrogridId,
+        *,
+        raise_on_errors: bool = False,
     ) -> Microgrid:
         """
         Get the details of a microgrid.
 
         Args:
             microgrid_id: The ID of the microgrid to get the details of.
+            raise_on_errors: If True, raise a
+                [ParsingError][frequenz.client.assets.exceptions.ParsingError]
+                when major issues are found in the response instead of just
+                logging them.
 
         Returns:
             The details of the microgrid.
@@ -113,16 +120,23 @@ class AssetsApiClient(
             method_name="GetMicrogrid",
         )
 
-        return microgrid_from_proto(response.microgrid)
+        return microgrid_from_proto(response.microgrid, raise_on_errors=raise_on_errors)
 
     async def list_microgrid_electrical_components(
-        self, microgrid_id: MicrogridId
+        self,
+        microgrid_id: MicrogridId,
+        *,
+        raise_on_errors: bool = False,
     ) -> list[ElectricalComponent]:
         """
         Get the electrical components of a microgrid.
 
         Args:
             microgrid_id: The ID of the microgrid to get the electrical components of.
+            raise_on_errors: If True, raise a
+                [ParsingError][frequenz.client.assets.exceptions.ParsingError]
+                when major issues are found in any component instead of just
+                logging them.
 
         Returns:
             The electrical components of the microgrid.
@@ -139,7 +153,8 @@ class AssetsApiClient(
         )
 
         return [
-            electrical_component_proto(component) for component in response.components
+            electrical_component_proto(component, raise_on_errors=raise_on_errors)
+            for component in response.components
         ]
 
     async def list_microgrid_electrical_component_connections(
@@ -147,6 +162,8 @@ class AssetsApiClient(
         microgrid_id: MicrogridId,
         source_component_ids: Iterable[ElectricalComponentId] = (),
         destination_component_ids: Iterable[ElectricalComponentId] = (),
+        *,
+        raise_on_errors: bool = False,
     ) -> list[ComponentConnection | None]:
         """
         Get the electrical component connections of a microgrid.
@@ -158,6 +175,10 @@ class AssetsApiClient(
                 these component IDs. If None or empty, no filtering is applied.
             destination_component_ids: Only return connections that terminate at
                 these component IDs. If None or empty, no filtering is applied.
+            raise_on_errors: If True, raise a
+                [ParsingError][frequenz.client.assets.exceptions.ParsingError]
+                when major issues are found in any connection instead of just
+                logging them.
 
         Returns:
             The electrical component connections of the microgrid.
@@ -177,9 +198,7 @@ class AssetsApiClient(
             method_name="ListMicrogridElectricalComponentConnections",
         )
 
-        return list(
-            map(
-                component_connection_from_proto,
-                filter(bool, response.connections),
-            )
-        )
+        return [
+            component_connection_from_proto(conn, raise_on_errors=raise_on_errors)
+            for conn in filter(bool, response.connections)
+        ]

@@ -16,18 +16,28 @@ from ._delivery_area_proto import delivery_area_from_proto
 from ._location import Location
 from ._location_proto import location_from_proto
 from ._microgrid import Microgrid, MicrogridStatus
+from .exceptions import ParsingError
 
 _logger = logging.getLogger(__name__)
 
 
-def microgrid_from_proto(message: microgrid_pb2.Microgrid) -> Microgrid:
+def microgrid_from_proto(
+    message: microgrid_pb2.Microgrid,
+    *,
+    raise_on_errors: bool = False,
+) -> Microgrid:
     """Convert a protobuf microgrid message to a microgrid object.
 
     Args:
         message: The protobuf message to convert.
+        raise_on_errors: If True, raise a ParsingError when major issues
+            are found instead of just logging them.
 
     Returns:
         The resulting microgrid object.
+
+    Raises:
+        ParsingError: If `raise_on_errors` is True and major issues are found.
     """
     major_issues: list[str] = []
     minor_issues: list[str] = []
@@ -55,6 +65,12 @@ def microgrid_from_proto(message: microgrid_pb2.Microgrid) -> Microgrid:
         major_issues.append("status is unrecognized")
 
     if major_issues:
+        if raise_on_errors:
+            raise ParsingError(
+                major_issues=major_issues,
+                minor_issues=minor_issues,
+                raw_message=message,
+            )
         _logger.warning(
             "Found issues in microgrid: %s | Protobuf message:\n%s",
             ", ".join(major_issues),
