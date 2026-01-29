@@ -12,7 +12,6 @@ from frequenz.client.common.microgrid.electrical_components import ElectricalCom
 
 from .._lifetime import Lifetime
 from .._lifetime_proto import lifetime_from_proto
-from ..exceptions import ParsingError
 from ._connection import ComponentConnection
 
 _logger = logging.getLogger(__name__)
@@ -20,22 +19,8 @@ _logger = logging.getLogger(__name__)
 
 def component_connection_from_proto(
     message: electrical_components_pb2.ElectricalComponentConnection,
-    *,
-    raise_on_errors: bool = False,
 ) -> ComponentConnection | None:
-    """Create a `ComponentConnection` from a protobuf message.
-
-    Args:
-        message: The protobuf message to parse.
-        raise_on_errors: If True, raise a ParsingError when major issues
-            are found instead of just logging them.
-
-    Returns:
-        The parsed ComponentConnection, or None if completely invalid.
-
-    Raises:
-        ParsingError: If `raise_on_errors` is True and major issues are found.
-    """
+    """Create a `ComponentConnection` from a protobuf message."""
     major_issues: list[str] = []
     minor_issues: list[str] = []
 
@@ -44,12 +29,6 @@ def component_connection_from_proto(
     )
 
     if major_issues:
-        if raise_on_errors:
-            raise ParsingError(
-                major_issues=major_issues,
-                minor_issues=minor_issues,
-                raw_message=message,
-            )
         _logger.warning(
             "Found issues in component connection: %s | Protobuf message:\n%s",
             ", ".join(major_issues),

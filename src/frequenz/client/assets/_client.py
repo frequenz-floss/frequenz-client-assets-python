@@ -18,12 +18,25 @@ from frequenz.client.common.microgrid import MicrogridId
 from frequenz.client.common.microgrid.electrical_components import ElectricalComponentId
 
 from ._microgrid import Microgrid
-from ._microgrid_proto import microgrid_from_proto
+from ._microgrid_proto import microgrid_from_proto, microgrid_from_proto_with_issues
 from .electrical_component._connection import ComponentConnection
-from .electrical_component._connection_proto import component_connection_from_proto
+from .electrical_component._connection_proto import (
+    component_connection_from_proto,
+    component_connection_from_proto_with_issues,
+)
 from .electrical_component._electrical_component import ElectricalComponent
-from .electrical_component._electrical_component_proto import electrical_component_proto
-from .exceptions import ClientNotConnected
+from .electrical_component._electrical_component_proto import (
+    electrical_component_from_proto_with_issues,
+    electrical_component_proto,
+)
+from .exceptions import (
+    ClientNotConnected,
+    InvalidConnectionError,
+    InvalidConnectionErrorGroup,
+    InvalidElectricalComponentError,
+    InvalidElectricalComponentErrorGroup,
+    InvalidMicrogridError,
+)
 
 DEFAULT_GRPC_CALL_TIMEOUT = 60.0
 """The default timeout for gRPC calls made by this client (in seconds)."""
@@ -88,7 +101,7 @@ class AssetsApiClient(
         # use the async stub, so we cast the sync stub to the async stub.
         return self._stub  # type: ignore
 
-    async def get_microgrid(  # noqa: DOC502 (raises ApiClientError indirectly)
+    async def get_microgrid(  # noqa: DOC502,DOC503 (raises indirectly)
         self,
         microgrid_id: MicrogridId,
         *,
@@ -99,9 +112,9 @@ class AssetsApiClient(
 
         Args:
             microgrid_id: The ID of the microgrid to get the details of.
-            raise_on_errors: If True, raise a
-                [ParsingError][frequenz.client.assets.exceptions.ParsingError]
-                when major issues are found in the response instead of just
+            raise_on_errors: If True, raise an
+                [InvalidMicrogridError][frequenz.client.assets.exceptions.InvalidMicrogridError]
+                when major validation issues are found instead of just
                 logging them.
 
         Returns:
@@ -110,6 +123,8 @@ class AssetsApiClient(
         Raises:
             ApiClientError: If there are any errors communicating with the Assets API,
                 most likely a subclass of [GrpcError][frequenz.client.base.exception.GrpcError].
+            InvalidMicrogridError: If `raise_on_errors` is True and major
+                validation issues are found.
         """
         response = await call_stub_method(
             self,
@@ -120,7 +135,24 @@ class AssetsApiClient(
             method_name="GetMicrogrid",
         )
 
-        return microgrid_from_proto(response.microgrid, raise_on_errors=raise_on_errors)
+        if raise_on_errors:
+            major_issues: list[str] = []
+            minor_issues: list[str] = []
+            microgrid = microgrid_from_proto_with_issues(
+                response.microgrid,
+                major_issues=major_issues,
+                minor_issues=minor_issues,
+            )
+            if major_issues:
+                raise InvalidMicrogridError(
+                    microgrid=microgrid,
+                    major_issues=major_issues,
+                    minor_issues=minor_issues,
+                    raw_message=response.microgrid,
+                )
+            return microgrid
+
+        return microgrid_from_proto(response.microgrid)
 
     async def list_microgrid_electrical_components(
         self,
@@ -133,13 +165,17 @@ class AssetsApiClient(
 
         Args:
             microgrid_id: The ID of the microgrid to get the electrical components of.
-            raise_on_errors: If True, raise a
-                [ParsingError][frequenz.client.assets.exceptions.ParsingError]
-                when major issues are found in any component instead of just
-                logging them.
+            raise_on_errors: If True, raise an
+                [InvalidElectricalComponentErrorGroup][frequenz.client.assets.exceptions.InvalidElectricalComponentErrorGroup]
+                when major validation issues are found in any component instead
+                of just logging them.
 
         Returns:
             The electrical components of the microgrid.
+
+        Raises:
+            InvalidElectricalComponentErrorGroup: If `raise_on_errors` is True
+                and major validation issues are found.
         """
         response = await call_stub_method(
             self,
@@ -152,9 +188,37 @@ class AssetsApiClient(
             method_name="ListMicrogridElectricalComponents",
         )
 
+        if raise_on_errors:
+            components: list[ElectricalComponent] = []
+            exceptions: list[InvalidElectricalComponentError] = []
+            for component_pb in response.components:
+                major_issues: list[str] = []
+                minor_issues: list[str] = []
+                component = electrical_component_from_proto_with_issues(
+                    component_pb,
+                    major_issues=major_issues,
+                    minor_issues=minor_issues,
+                )
+                if major_issues:
+                    exceptions.append(
+                        InvalidElectricalComponentError(
+                            component=component,
+                            major_issues=major_issues,
+                            minor_issues=minor_issues,
+                            raw_message=component_pb,
+                        )
+                    )
+                else:
+                    components.append(component)
+            if exceptions:
+                raise InvalidElectricalComponentErrorGroup(
+                    valid_components=components,
+                    exceptions=exceptions,
+                )
+            return components
+
         return [
-            electrical_component_proto(component, raise_on_errors=raise_on_errors)
-            for component in response.components
+            electrical_component_proto(component) for component in response.components
         ]
 
     async def list_microgrid_electrical_component_connections(
@@ -175,13 +239,17 @@ class AssetsApiClient(
                 these component IDs. If None or empty, no filtering is applied.
             destination_component_ids: Only return connections that terminate at
                 these component IDs. If None or empty, no filtering is applied.
-            raise_on_errors: If True, raise a
-                [ParsingError][frequenz.client.assets.exceptions.ParsingError]
-                when major issues are found in any connection instead of just
-                logging them.
+            raise_on_errors: If True, raise an
+                [InvalidConnectionErrorGroup][frequenz.client.assets.exceptions.InvalidConnectionErrorGroup]
+                when major validation issues are found in any connection instead
+                of just logging them.
 
         Returns:
             The electrical component connections of the microgrid.
+
+        Raises:
+            InvalidConnectionErrorGroup: If `raise_on_errors` is True and
+                major validation issues are found.
         """
         request = assets_pb2.ListMicrogridElectricalComponentConnectionsRequest(
             microgrid_id=int(microgrid_id),
@@ -198,7 +266,35 @@ class AssetsApiClient(
             method_name="ListMicrogridElectricalComponentConnections",
         )
 
-        return [
-            component_connection_from_proto(conn, raise_on_errors=raise_on_errors)
-            for conn in filter(bool, response.connections)
-        ]
+        if raise_on_errors:
+            connections: list[ComponentConnection | None] = []
+            exceptions: list[InvalidConnectionError] = []
+            for conn_pb in filter(bool, response.connections):
+                major_issues: list[str] = []
+                connection = component_connection_from_proto_with_issues(
+                    conn_pb, major_issues=major_issues
+                )
+                if major_issues:
+                    exceptions.append(
+                        InvalidConnectionError(
+                            connection=connection,
+                            major_issues=major_issues,
+                            minor_issues=[],
+                            raw_message=conn_pb,
+                        )
+                    )
+                elif connection is not None:
+                    connections.append(connection)
+            if exceptions:
+                raise InvalidConnectionErrorGroup(
+                    valid_connections=[c for c in connections if c is not None],
+                    exceptions=exceptions,
+                )
+            return connections
+
+        return list(
+            map(
+                component_connection_from_proto,
+                filter(bool, response.connections),
+            )
+        )

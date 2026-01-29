@@ -16,7 +16,6 @@ from frequenz.client.common.microgrid.electrical_components import ElectricalCom
 
 from .._lifetime import Lifetime
 from .._lifetime_proto import lifetime_from_proto
-from ..exceptions import ParsingError
 from ..metrics._bounds import Bounds
 from ..metrics._bounds_proto import bounds_from_proto
 from ..metrics._metric import Metric
@@ -67,21 +66,14 @@ _logger = logging.getLogger(__name__)
 
 def electrical_component_proto(
     message: electrical_components_pb2.ElectricalComponent,
-    *,
-    raise_on_errors: bool = False,
 ) -> ElectricalComponentType:
     """Convert a protobuf message to a `Component` instance.
 
     Args:
         message: The protobuf message.
-        raise_on_errors: If True, raise a ParsingError when major issues
-            are found instead of just logging them.
 
     Returns:
         The resulting `ElectricalComponent` instance.
-
-    Raises:
-        ParsingError: If `raise_on_errors` is True and major issues are found.
     """
     major_issues: list[str] = []
     minor_issues: list[str] = []
@@ -93,12 +85,6 @@ def electrical_component_proto(
     )
 
     if major_issues:
-        if raise_on_errors:
-            raise ParsingError(
-                major_issues=major_issues,
-                minor_issues=minor_issues,
-                raw_message=message,
-            )
         _logger.warning(
             "Found issues in component: %s | Protobuf message:\n%s",
             ", ".join(major_issues),
