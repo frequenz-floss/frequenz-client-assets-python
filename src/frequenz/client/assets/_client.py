@@ -267,7 +267,7 @@ class AssetsApiClient(
         )
 
         if raise_on_errors:
-            connections: list[ComponentConnection | None] = []
+            valid_connections: list[ComponentConnection] = []
             exceptions: list[InvalidConnectionError] = []
             for conn_pb in filter(bool, response.connections):
                 major_issues: list[str] = []
@@ -284,13 +284,13 @@ class AssetsApiClient(
                         )
                     )
                 elif connection is not None:
-                    connections.append(connection)
+                    valid_connections.append(connection)
             if exceptions:
                 raise InvalidConnectionErrorGroup(
-                    valid_connections=[c for c in connections if c is not None],
+                    valid_connections=valid_connections,
                     exceptions=exceptions,
                 )
-            return connections
+            return valid_connections  # type: ignore[return-value]
 
         return list(
             map(
