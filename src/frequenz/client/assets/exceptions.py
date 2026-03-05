@@ -98,7 +98,12 @@ class ValidationError(Exception):
             raw_message: The protobuf message that failed validation.
         """
         issues_summary = ", ".join(major_issues)
-        super().__init__(f"Validation failed: {issues_summary}")
+        message = (
+            f"Validation failed: {issues_summary}"
+            if issues_summary
+            else "Validation failed"
+        )
+        super().__init__(message)
         self.major_issues = major_issues
         self.minor_issues = minor_issues
         self.raw_message = raw_message
