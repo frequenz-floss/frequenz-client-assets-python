@@ -32,9 +32,7 @@ from .electrical_component._electrical_component_proto import (
 from .exceptions import (
     ClientNotConnected,
     InvalidConnectionError,
-    InvalidConnectionErrorGroup,
     InvalidElectricalComponentError,
-    InvalidElectricalComponentErrorGroup,
     InvalidMicrogridError,
 )
 
@@ -166,7 +164,7 @@ class AssetsApiClient(
         Args:
             microgrid_id: The ID of the microgrid to get the electrical components of.
             raise_on_errors: If True, raise an
-                [InvalidElectricalComponentErrorGroup][frequenz.client.assets.exceptions.InvalidElectricalComponentErrorGroup]
+                `ExceptionGroup[InvalidElectricalComponentError]`
                 when major validation issues are found in any component instead
                 of just logging them.
 
@@ -174,8 +172,9 @@ class AssetsApiClient(
             The electrical components of the microgrid.
 
         Raises:
-            InvalidElectricalComponentErrorGroup: If `raise_on_errors` is True
-                and major validation issues are found.
+            ExceptionGroup: If `raise_on_errors` is True and major validation
+                issues are found. All exceptions in the group are
+                [InvalidElectricalComponentError][frequenz.client.assets.exceptions.InvalidElectricalComponentError].
         """
         response = await call_stub_method(
             self,
@@ -211,9 +210,9 @@ class AssetsApiClient(
                 else:
                     components.append(component)
             if exceptions:
-                raise InvalidElectricalComponentErrorGroup(
-                    valid_components=components,
-                    exceptions=exceptions,
+                raise ExceptionGroup(
+                    f"{len(exceptions)} electrical component(s) failed validation",
+                    exceptions,
                 )
             return components
 
@@ -240,7 +239,7 @@ class AssetsApiClient(
             destination_component_ids: Only return connections that terminate at
                 these component IDs. If None or empty, no filtering is applied.
             raise_on_errors: If True, raise an
-                [InvalidConnectionErrorGroup][frequenz.client.assets.exceptions.InvalidConnectionErrorGroup]
+                `ExceptionGroup[InvalidConnectionError]`
                 when major validation issues are found in any connection instead
                 of just logging them.
 
@@ -248,8 +247,9 @@ class AssetsApiClient(
             The electrical component connections of the microgrid.
 
         Raises:
-            InvalidConnectionErrorGroup: If `raise_on_errors` is True and
-                major validation issues are found.
+            ExceptionGroup: If `raise_on_errors` is True and major validation
+                issues are found. All exceptions in the group are
+                [InvalidConnectionError][frequenz.client.assets.exceptions.InvalidConnectionError].
         """
         request = assets_pb2.ListMicrogridElectricalComponentConnectionsRequest(
             microgrid_id=int(microgrid_id),
@@ -286,9 +286,9 @@ class AssetsApiClient(
                 elif connection is not None:
                     valid_connections.append(connection)
             if exceptions:
-                raise InvalidConnectionErrorGroup(
-                    valid_connections=valid_connections,
-                    exceptions=exceptions,
+                raise ExceptionGroup(
+                    f"{len(exceptions)} connection(s) failed validation",
+                    exceptions,
                 )
             return valid_connections  # type: ignore[return-value]
 
