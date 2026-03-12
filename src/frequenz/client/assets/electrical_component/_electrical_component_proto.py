@@ -172,6 +172,10 @@ def component_base_from_proto_with_issues(
     )
 
 
+# This function is just a big match statement to dispatch to the right component
+# class based on the category and subcategory, so it's fine to have many branches
+# here.
+# pylint: disable-next=too-many-branches
 def electrical_component_from_proto_with_issues(
     message: electrical_components_pb2.ElectricalComponent,
     *,
