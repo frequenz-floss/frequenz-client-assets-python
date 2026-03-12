@@ -227,7 +227,7 @@ class AssetsApiClient(
         destination_component_ids: Iterable[ElectricalComponentId] = (),
         *,
         raise_on_errors: bool = False,
-    ) -> list[ComponentConnection | None]:
+    ) -> list[ComponentConnection]:
         """
         Get the electrical component connections of a microgrid.
 
@@ -290,11 +290,13 @@ class AssetsApiClient(
                     f"{len(exceptions)} connection(s) failed validation",
                     exceptions,
                 )
-            return valid_connections  # type: ignore[return-value]
+            return valid_connections
 
-        return list(
-            map(
+        return [
+            c
+            for c in map(
                 component_connection_from_proto,
                 filter(bool, response.connections),
             )
-        )
+            if c is not None
+        ]
