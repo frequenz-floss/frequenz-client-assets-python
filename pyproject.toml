@@ -53,7 +53,7 @@ name = "Frequenz Energy-as-a-Service GmbH"
 email = "floss@frequenz.com"
 
 [project.optional-dependencies]
-cli = ["asyncclick == 8.3.0.4"]
+cli = ["asyncclick == 8.3.0.7"]
 dev-flake8 = [
   "flake8 == 7.3.0",
   "flake8-datetimez == 20.10.0",
