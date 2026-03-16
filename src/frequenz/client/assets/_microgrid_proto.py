@@ -32,6 +32,46 @@ def microgrid_from_proto(message: microgrid_pb2.Microgrid) -> Microgrid:
     major_issues: list[str] = []
     minor_issues: list[str] = []
 
+    microgrid = microgrid_from_proto_with_issues(
+        message, major_issues=major_issues, minor_issues=minor_issues
+    )
+
+    if major_issues:
+        _logger.warning(
+            "Found issues in microgrid: %s | Protobuf message:\n%s",
+            ", ".join(major_issues),
+            message,
+        )
+
+    if minor_issues:
+        _logger.debug(
+            "Found minor issues in microgrid: %s | Protobuf message:\n%s",
+            ", ".join(minor_issues),
+            message,
+        )
+
+    return microgrid
+
+
+def microgrid_from_proto_with_issues(
+    message: microgrid_pb2.Microgrid,
+    *,
+    major_issues: list[str],
+    minor_issues: list[str],
+) -> Microgrid:
+    """Convert a protobuf microgrid message to a microgrid object, collecting issues.
+
+    This function is useful when you want to collect issues during parsing
+    rather than logging them immediately.
+
+    Args:
+        message: The protobuf message to convert.
+        major_issues: A list to collect major issues found during validation.
+        minor_issues: A list to collect minor issues found during validation.
+
+    Returns:
+        The resulting microgrid object.
+    """
     delivery_area: DeliveryArea | None = None
     if message.HasField("delivery_area"):
         delivery_area = delivery_area_from_proto(message.delivery_area)
@@ -53,20 +93,6 @@ def microgrid_from_proto(message: microgrid_pb2.Microgrid) -> Microgrid:
         major_issues.append("status is unspecified")
     elif isinstance(status, int):
         major_issues.append("status is unrecognized")
-
-    if major_issues:
-        _logger.warning(
-            "Found issues in microgrid: %s | Protobuf message:\n%s",
-            ", ".join(major_issues),
-            message,
-        )
-
-    if minor_issues:
-        _logger.debug(
-            "Found minor issues in microgrid: %s | Protobuf message:\n%s",
-            ", ".join(minor_issues),
-            message,
-        )
 
     return Microgrid(
         id=MicrogridId(message.id),
