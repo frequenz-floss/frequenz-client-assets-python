@@ -294,9 +294,6 @@ class AssetsApiClient(
 
         return [
             c
-            for c in map(
-                component_connection_from_proto,
-                filter(bool, response.connections),
-            )
+            for c in map(component_connection_from_proto, response.connections)
             if c is not None
         ]
