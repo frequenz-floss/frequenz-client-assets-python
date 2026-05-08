@@ -57,6 +57,7 @@ from ._power_transformer import PowerTransformer
 from ._precharger import Precharger
 from ._problematic import UnrecognizedComponent, UnspecifiedComponent
 from ._static_transfer_switch import StaticTransferSwitch
+from ._steam_boiler import SteamBoiler
 from ._types import ElectricalComponentType
 from ._uninterruptible_power_supply import UninterruptiblePowerSupply
 from ._wind_turbine import WindTurbine
@@ -219,6 +220,7 @@ def electrical_component_from_proto_with_issues(
             | ElectricalComponentCategory.PRECHARGER
             | ElectricalComponentCategory.BREAKER
             | ElectricalComponentCategory.PLC
+            | ElectricalComponentCategory.STEAM_BOILER
             | ElectricalComponentCategory.STATIC_TRANSFER_SWITCH
             | ElectricalComponentCategory.UNINTERRUPTIBLE_POWER_SUPPLY
             | ElectricalComponentCategory.CAPACITOR_BANK
@@ -416,6 +418,7 @@ def _trivial_category_to_class(
     | Precharger
     | Breaker
     | Plc
+    | SteamBoiler
     | StaticTransferSwitch
     | UninterruptiblePowerSupply
     | CapacitorBank
@@ -433,6 +436,7 @@ def _trivial_category_to_class(
         ElectricalComponentCategory.PRECHARGER: Precharger,
         ElectricalComponentCategory.BREAKER: Breaker,
         ElectricalComponentCategory.PLC: Plc,
+        ElectricalComponentCategory.STEAM_BOILER: SteamBoiler,
         ElectricalComponentCategory.STATIC_TRANSFER_SWITCH: StaticTransferSwitch,
         ElectricalComponentCategory.UNINTERRUPTIBLE_POWER_SUPPLY: UninterruptiblePowerSupply,
         ElectricalComponentCategory.CAPACITOR_BANK: CapacitorBank,
