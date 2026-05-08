@@ -26,6 +26,7 @@ from ._problematic import (
     UnspecifiedComponent,
 )
 from ._static_transfer_switch import StaticTransferSwitch
+from ._steam_boiler import SteamBoiler
 from ._uninterruptible_power_supply import UninterruptiblePowerSupply
 from ._wind_turbine import WindTurbine
 
@@ -60,6 +61,7 @@ ElectricalComponentType: TypeAlias = (
     | Precharger
     | Breaker
     | Plc
+    | SteamBoiler
     | StaticTransferSwitch
     | UninterruptiblePowerSupply
     | CapacitorBank

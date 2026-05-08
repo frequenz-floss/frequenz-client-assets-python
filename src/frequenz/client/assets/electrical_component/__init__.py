@@ -50,6 +50,7 @@ from ._problematic import (
     UnspecifiedComponent,
 )
 from ._static_transfer_switch import StaticTransferSwitch
+from ._steam_boiler import SteamBoiler
 from ._uninterruptible_power_supply import UninterruptiblePowerSupply
 from ._wind_turbine import WindTurbine
 
@@ -91,6 +92,7 @@ __all__ = [
     "MismatchedCategoryComponent",
     "UnrecognizedComponent",
     "UnspecifiedComponent",
+    "SteamBoiler",
     "StaticTransferSwitch",
     "UninterruptiblePowerSupply",
     "WindTurbine",
