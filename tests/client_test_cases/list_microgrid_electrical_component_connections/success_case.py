@@ -6,11 +6,11 @@
 from datetime import datetime, timezone
 from typing import Any
 
-from frequenz.api.assets.v1 import assets_pb2
 from frequenz.api.common.v1alpha8.microgrid import lifetime_pb2
 from frequenz.api.common.v1alpha8.microgrid.electrical_components import (
     electrical_components_pb2,
 )
+from frequenz.api.platformassets.v1alpha1 import platformassets_pb2 as assets_pb2
 from frequenz.client.base.conversion import to_timestamp
 from frequenz.client.common.microgrid.electrical_components import ElectricalComponentId
 
@@ -22,7 +22,7 @@ def assert_stub_method_call(stub_method: Any) -> None:
     """Assert that the gRPC request matches the expected request."""
     stub_method.assert_called_once_with(
         assets_pb2.ListMicrogridElectricalComponentConnectionsRequest(
-            microgrid_id=1234, source_component_ids=[], destination_component_ids=[]
+            microgrid_id=1234
         ),
         timeout=60.0,
     )

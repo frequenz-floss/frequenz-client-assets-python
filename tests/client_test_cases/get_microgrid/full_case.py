@@ -8,10 +8,10 @@ from typing import Any
 from unittest.mock import AsyncMock
 
 import pytest
-from frequenz.api.assets.v1 import assets_pb2
 from frequenz.api.common.v1alpha8.grid import delivery_area_pb2
 from frequenz.api.common.v1alpha8.microgrid import microgrid_pb2
 from frequenz.api.common.v1alpha8.types import location_pb2
+from frequenz.api.platformassets.v1alpha1 import platformassets_pb2 as assets_pb2
 from frequenz.client.base.conversion import to_timestamp
 from frequenz.client.common.microgrid import EnterpriseId, MicrogridId
 
