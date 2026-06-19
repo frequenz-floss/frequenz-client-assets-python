@@ -11,7 +11,10 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 
-from frequenz.api.assets.v1 import assets_pb2, assets_pb2_grpc
+from frequenz.api.platformassets.v1alpha1 import (
+    platformassets_pb2,
+    platformassets_pb2_grpc,
+)
 from frequenz.client.base import channel
 from frequenz.client.base.client import BaseApiClient, call_stub_method
 from frequenz.client.common.microgrid import MicrogridId
@@ -41,7 +44,7 @@ DEFAULT_GRPC_CALL_TIMEOUT = 60.0
 
 
 class AssetsApiClient(
-    BaseApiClient[assets_pb2_grpc.PlatformAssetsStub]
+    BaseApiClient[platformassets_pb2_grpc.PlatformAssetsServiceStub]
 ):  # pylint: disable=too-many-arguments
     """A client for the Assets API."""
 
@@ -75,7 +78,7 @@ class AssetsApiClient(
         """
         super().__init__(
             server_url,
-            assets_pb2_grpc.PlatformAssetsStub,
+            platformassets_pb2_grpc.PlatformAssetsServiceStub,
             connect=connect,
             channel_defaults=channel_defaults,
             auth_key=auth_key,
@@ -83,7 +86,7 @@ class AssetsApiClient(
         )
 
     @property
-    def stub(self) -> assets_pb2_grpc.PlatformAssetsAsyncStub:
+    def stub(self) -> platformassets_pb2_grpc.PlatformAssetsServiceAsyncStub:
         """
         The gRPC stub for the Assets API.
 
@@ -127,7 +130,7 @@ class AssetsApiClient(
         response = await call_stub_method(
             self,
             lambda: self.stub.GetMicrogrid(
-                assets_pb2.GetMicrogridRequest(microgrid_id=int(microgrid_id)),
+                platformassets_pb2.GetMicrogridRequest(microgrid_id=int(microgrid_id)),
                 timeout=DEFAULT_GRPC_CALL_TIMEOUT,
             ),
             method_name="GetMicrogrid",
@@ -179,7 +182,7 @@ class AssetsApiClient(
         response = await call_stub_method(
             self,
             lambda: self.stub.ListMicrogridElectricalComponents(
-                assets_pb2.ListMicrogridElectricalComponentsRequest(
+                platformassets_pb2.ListMicrogridElectricalComponentsRequest(
                     microgrid_id=int(microgrid_id),
                 ),
                 timeout=DEFAULT_GRPC_CALL_TIMEOUT,
@@ -251,11 +254,14 @@ class AssetsApiClient(
                 issues are found. All exceptions in the group are
                 [InvalidConnectionError][frequenz.client.assets.exceptions.InvalidConnectionError].
         """
-        request = assets_pb2.ListMicrogridElectricalComponentConnectionsRequest(
+        source_ids = [int(c) for c in source_component_ids]
+        destination_ids = [int(c) for c in destination_component_ids]
+        request = platformassets_pb2.ListMicrogridElectricalComponentConnectionsRequest(
             microgrid_id=int(microgrid_id),
-            source_component_ids=(int(c) for c in source_component_ids),
-            destination_component_ids=(int(c) for c in destination_component_ids),
         )
+        if source_ids or destination_ids:
+            request.filter.source_component_ids.extend(source_ids)
+            request.filter.destination_component_ids.extend(destination_ids)
 
         response = await call_stub_method(
             self,

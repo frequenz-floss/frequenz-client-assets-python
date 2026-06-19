@@ -5,7 +5,7 @@
 
 from typing import Any
 
-from frequenz.api.assets.v1 import assets_pb2
+from frequenz.api.platformassets.v1alpha1 import platformassets_pb2 as assets_pb2
 
 # No client_args or client_kwargs needed for this call
 
@@ -14,7 +14,7 @@ def assert_stub_method_call(stub_method: Any) -> None:
     """Assert that the gRPC request matches the expected request."""
     stub_method.assert_called_once_with(
         assets_pb2.ListMicrogridElectricalComponentConnectionsRequest(
-            microgrid_id=1234, source_component_ids=[], destination_component_ids=[]
+            microgrid_id=1234
         ),
         timeout=60.0,
     )

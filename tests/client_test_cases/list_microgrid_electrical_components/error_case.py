@@ -5,7 +5,7 @@
 
 from typing import Any
 
-from frequenz.api.assets.v1 import assets_pb2
+from frequenz.api.platformassets.v1alpha1 import platformassets_pb2 as assets_pb2
 from grpc import StatusCode
 
 from frequenz.client.assets.exceptions import PermissionDenied

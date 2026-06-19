@@ -9,7 +9,7 @@ from collections.abc import AsyncIterator
 from pathlib import Path
 
 import pytest
-from frequenz.api.assets.v1 import assets_pb2_grpc
+from frequenz.api.platformassets.v1alpha1 import platformassets_pb2_grpc
 
 from frequenz.client.assets import AssetsApiClient
 
@@ -21,7 +21,9 @@ TESTS_DIR = Path(__file__).parent / "client_test_cases"
 @pytest.fixture
 async def client() -> AsyncIterator[AssetsApiClient]:
     """Fixture that provides a AssetsApiClient with a mock gRPC stub and channel."""
-    with patch_client_class(AssetsApiClient, assets_pb2_grpc.PlatformAssetsStub):
+    with patch_client_class(
+        AssetsApiClient, platformassets_pb2_grpc.PlatformAssetsServiceStub
+    ):
         client = AssetsApiClient("grpc://localhost:1234")
         async with client:
             yield client
