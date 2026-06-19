@@ -40,8 +40,8 @@ dependencies = [
   "frequenz-api-assets >= 0.3.0, < 0.4.0",
   "frequenz-api-common >= 0.8.9, < 1",
   "frequenz-client-base >= 0.11.0, < 0.12.0",
-  "frequenz-client-common >= 0.3.6, < 0.4.0",
-  "grpcio >= 1.80.0, < 2",
+  "frequenz-client-common >= 0.3.8, < 0.4.0",
+  "grpcio >= 1.81.0, < 2",
 ]
 dynamic = ["version"]
 

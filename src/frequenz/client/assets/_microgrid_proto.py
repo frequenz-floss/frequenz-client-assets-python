@@ -7,8 +7,8 @@ import logging
 
 from frequenz.api.common.v1alpha8.microgrid import microgrid_pb2
 from frequenz.client.base import conversion
-from frequenz.client.common import enum_proto
 from frequenz.client.common.microgrid import EnterpriseId, MicrogridId
+from frequenz.client.common.proto import enum_from_proto
 
 from ._delivery_area import DeliveryArea
 from ._delivery_area_proto import delivery_area_from_proto
@@ -87,7 +87,7 @@ def microgrid_from_proto_with_issues(
     if name is None:
         minor_issues.append("name is empty")
 
-    status = enum_proto.enum_from_proto(message.status, MicrogridStatus)
+    status = enum_from_proto(message.status, MicrogridStatus)
     if status is MicrogridStatus.UNSPECIFIED:
         major_issues.append("status is unspecified")
     elif isinstance(status, int):

@@ -10,9 +10,9 @@ from typing import NamedTuple, assert_never
 from frequenz.api.common.v1alpha8.microgrid.electrical_components import (
     electrical_components_pb2,
 )
-from frequenz.client.common import enum_proto
 from frequenz.client.common.microgrid import MicrogridId
 from frequenz.client.common.microgrid.electrical_components import ElectricalComponentId
+from frequenz.client.common.proto import enum_from_proto
 
 from .._lifetime import Lifetime
 from .._lifetime_proto import lifetime_from_proto
@@ -155,7 +155,7 @@ def component_base_from_proto_with_issues(
         minor_issues=minor_issues,
     )
 
-    category = enum_proto.enum_from_proto(message.category, ElectricalComponentCategory)
+    category = enum_from_proto(message.category, ElectricalComponentCategory)
     if category is ElectricalComponentCategory.UNSPECIFIED:
         major_issues.append("category is unspecified")
     elif isinstance(category, int):
@@ -243,7 +243,7 @@ def electrical_component_from_proto_with_issues(
                 BatteryType.LI_ION: LiIonBattery,
                 BatteryType.NA_ION: NaIonBattery,
             }
-            battery_type = enum_proto.enum_from_proto(
+            battery_type = enum_from_proto(
                 message.category_specific_info.battery.type, BatteryType
             )
             match battery_type:
@@ -285,7 +285,7 @@ def electrical_component_from_proto_with_issues(
                 EvChargerType.DC: DcEvCharger,
                 EvChargerType.HYBRID: HybridEvCharger,
             }
-            ev_charger_type = enum_proto.enum_from_proto(
+            ev_charger_type = enum_from_proto(
                 message.category_specific_info.ev_charger.type, EvChargerType
             )
             match ev_charger_type:
@@ -337,7 +337,7 @@ def electrical_component_from_proto_with_issues(
                 InverterType.SOLAR: SolarInverter,
                 InverterType.HYBRID: HybridInverter,
             }
-            inverter_type = enum_proto.enum_from_proto(
+            inverter_type = enum_from_proto(
                 message.category_specific_info.inverter.type, InverterType
             )
             match inverter_type:
@@ -462,7 +462,7 @@ def _metric_config_bounds_from_proto(
     """
     bounds: dict[Metric | int, Bounds] = {}
     for metric_bound in message:
-        metric = enum_proto.enum_from_proto(metric_bound.metric, Metric)
+        metric = enum_from_proto(metric_bound.metric, Metric)
         match metric:
             case Metric.UNSPECIFIED:
                 major_issues.append("metric_config_bounds has an UNSPECIFIED metric")

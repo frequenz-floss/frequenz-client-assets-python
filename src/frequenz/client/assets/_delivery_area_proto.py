@@ -6,7 +6,7 @@
 import logging
 
 from frequenz.api.common.v1alpha8.grid import delivery_area_pb2
-from frequenz.client.common import enum_proto
+from frequenz.client.common.proto import enum_from_proto
 
 from ._delivery_area import DeliveryArea, EnergyMarketCodeType
 
@@ -28,7 +28,9 @@ def delivery_area_from_proto(message: delivery_area_pb2.DeliveryArea) -> Deliver
     if code is None:
         issues.append("code is empty")
 
-    code_type = enum_proto.enum_from_proto(message.code_type, EnergyMarketCodeType)
+    code_type: EnergyMarketCodeType | int = enum_from_proto(
+        message.code_type, EnergyMarketCodeType
+    )
     if code_type is EnergyMarketCodeType.UNSPECIFIED:
         issues.append("code_type is unspecified")
     elif isinstance(code_type, int):
@@ -42,3 +44,17 @@ def delivery_area_from_proto(message: delivery_area_pb2.DeliveryArea) -> Deliver
         )
 
     return DeliveryArea(code=code, code_type=code_type)
+
+
+def delivery_area_to_proto(
+    delivery_area: DeliveryArea,
+) -> delivery_area_pb2.DeliveryArea:
+    """Convert a delivery area object to a protobuf message."""
+    return delivery_area_pb2.DeliveryArea(
+        code=delivery_area.code or "",
+        code_type=delivery_area_pb2.EnergyMarketCodeType.ValueType(
+            delivery_area.code_type.value
+            if isinstance(delivery_area.code_type, EnergyMarketCodeType)
+            else delivery_area.code_type
+        ),
+    )

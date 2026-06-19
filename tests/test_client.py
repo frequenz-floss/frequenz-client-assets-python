@@ -44,6 +44,58 @@ async def test_get_microgrid(
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
     "spec",
+    get_test_specs("list_gridpools", tests_dir=TESTS_DIR),
+    ids=str,
+)
+async def test_list_gridpools(
+    client: AssetsApiClient, spec: ApiClientTestCaseSpec
+) -> None:
+    """Test list_gridpools method."""
+    await spec.test_unary_unary_call(client, "ListGridpools")
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "spec",
+    get_test_specs("list_gridpool_energy_schedules", tests_dir=TESTS_DIR),
+    ids=str,
+)
+async def test_list_gridpool_energy_schedules(
+    client: AssetsApiClient, spec: ApiClientTestCaseSpec
+) -> None:
+    """Test list_gridpool_energy_schedules method."""
+    await spec.test_unary_unary_call(client, "ListGridpoolEnergySchedules")
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "spec",
+    get_test_specs("list_market_topology_relations", tests_dir=TESTS_DIR),
+    ids=str,
+)
+async def test_list_market_topology_relations(
+    client: AssetsApiClient, spec: ApiClientTestCaseSpec
+) -> None:
+    """Test list_market_topology_relations method."""
+    await spec.test_unary_unary_call(client, "ListMarketTopologyRelations")
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "spec",
+    get_test_specs("list_microgrids", tests_dir=TESTS_DIR),
+    ids=str,
+)
+async def test_list_microgrids(
+    client: AssetsApiClient, spec: ApiClientTestCaseSpec
+) -> None:
+    """Test list_microgrids method."""
+    await spec.test_unary_unary_call(client, "ListMicrogrids")
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "spec",
     get_test_specs("list_microgrid_electrical_components", tests_dir=TESTS_DIR),
     ids=str,
 )
@@ -69,3 +121,16 @@ async def test_list_connections(
     await spec.test_unary_unary_call(
         client, "ListMicrogridElectricalComponentConnections"
     )
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "spec",
+    get_test_specs("list_microgrid_sensors", tests_dir=TESTS_DIR),
+    ids=str,
+)
+async def test_list_microgrid_sensors(
+    client: AssetsApiClient, spec: ApiClientTestCaseSpec
+) -> None:
+    """Test list_microgrid_sensors method."""
+    await spec.test_unary_unary_call(client, "ListMicrogridSensors")
