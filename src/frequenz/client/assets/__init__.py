@@ -16,7 +16,7 @@ from ._gridpool_energy_schedule import (
 from ._interval import Interval
 from ._lifetime import Lifetime
 from ._location import Location
-from ._market_location import MarketLocation, MarketLocationId, MarketLocationIdType
+from ._market_location import MarketLocationId, MarketLocationIdType, MarketLocationRef
 from ._market_topology import (
     MarketParticipation,
     MarketParticipationType,
@@ -40,9 +40,9 @@ __all__ = [
     "MicrogridStatus",
     "Location",
     "Lifetime",
-    "MarketLocation",
     "MarketLocationId",
     "MarketLocationIdType",
+    "MarketLocationRef",
     "MarketParticipation",
     "MarketParticipationType",
     "MarketTopologyRelation",

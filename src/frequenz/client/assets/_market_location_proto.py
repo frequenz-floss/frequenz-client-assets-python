@@ -1,12 +1,12 @@
 # License: MIT
 # Copyright © 2026 Frequenz Energy-as-a-Service GmbH
 
-"""Conversion of MarketLocation objects to/from protobuf messages."""
+"""Conversion of MarketLocationRef objects to/from protobuf messages."""
 
 from frequenz.api.common.v1alpha8.grid import market_location_pb2
 from frequenz.client.common.proto import enum_from_proto
 
-from ._market_location import MarketLocation, MarketLocationId, MarketLocationIdType
+from ._market_location import MarketLocationId, MarketLocationIdType, MarketLocationRef
 
 
 def market_location_id_from_proto(
@@ -19,11 +19,11 @@ def market_location_id_from_proto(
     )
 
 
-def market_location_from_proto(
-    message: market_location_pb2.MarketLocation,
-) -> MarketLocation:
-    """Convert a protobuf market location message to a domain object."""
-    return MarketLocation(
+def market_location_ref_from_proto(
+    message: market_location_pb2.MarketLocationRef,
+) -> MarketLocationRef:
+    """Convert a protobuf market location ref message to a domain object."""
+    return MarketLocationRef(
         market_area=message.market_area,
         market_location_id=(
             market_location_id_from_proto(message.market_location_id)

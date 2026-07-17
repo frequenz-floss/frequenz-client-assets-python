@@ -17,9 +17,9 @@ from frequenz.client.assets import (
     DeliveryArea,
     EnergyMarketCodeType,
     Interval,
-    MarketLocation,
     MarketLocationId,
     MarketLocationIdType,
+    MarketLocationRef,
     MarketParticipation,
     MarketParticipationType,
     MarketTopologyRelation,
@@ -64,7 +64,7 @@ grpc_response = assets_pb2.ListMarketTopologyRelationsResponse(
     relations=[
         assets_pb2.MarketTopologyRelation(
             microgrid_id=1234,
-            market_location=market_location_pb2.MarketLocation(
+            market_location_ref=market_location_pb2.MarketLocationRef(
                 market_area=market_area_pb2.MarketArea.ValueType(1),
                 market_location_id=market_location_pb2.MarketLocationId(
                     id=market_location_pb2.MarketLocationIdValue(value="DE001"),
@@ -94,7 +94,7 @@ def assert_client_result(result: Any) -> None:
     assert result == [
         MarketTopologyRelation(
             microgrid_id=MicrogridId(1234),
-            market_location=MarketLocation(
+            market_location_ref=MarketLocationRef(
                 market_area=1,
                 market_location_id=MarketLocationId(
                     value="DE001", type=MarketLocationIdType.MALO_ID

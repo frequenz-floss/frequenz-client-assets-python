@@ -68,8 +68,8 @@ class MarketLocationId:
 
 
 @dataclass(frozen=True, kw_only=True)
-class MarketLocation:
-    """A market-facing metering point in a specific market area."""
+class MarketLocationRef:
+    """A reference to a market-facing metering point in a specific market area."""
 
     market_area: int
     """The market area in which this market location is registered."""
