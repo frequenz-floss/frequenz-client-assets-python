@@ -9,7 +9,7 @@ from frequenz.client.common.proto import enum_from_proto
 
 from ._delivery_area_proto import delivery_area_from_proto
 from ._interval_proto import interval_from_proto
-from ._market_location_proto import market_location_from_proto
+from ._market_location_proto import market_location_ref_from_proto
 from ._market_topology import (
     MarketParticipation,
     MarketParticipationType,
@@ -41,9 +41,9 @@ def market_topology_relation_from_proto(
             if message.HasField("microgrid_id")
             else None
         ),
-        market_location=(
-            market_location_from_proto(message.market_location)
-            if message.HasField("market_location")
+        market_location_ref=(
+            market_location_ref_from_proto(message.market_location_ref)
+            if message.HasField("market_location_ref")
             else None
         ),
         gridpool_id=message.gridpool_id if message.HasField("gridpool_id") else None,

@@ -11,7 +11,7 @@ from frequenz.client.common.microgrid import MicrogridId
 
 from ._delivery_area import DeliveryArea
 from ._interval import Interval
-from ._market_location import MarketLocation
+from ._market_location import MarketLocationRef
 
 
 @enum.unique
@@ -46,7 +46,7 @@ class MarketTopologyRelation:
     microgrid_id: MicrogridId | None
     """The microgrid associated with this relation."""
 
-    market_location: MarketLocation | None
+    market_location_ref: MarketLocationRef | None
     """The market location associated with this relation."""
 
     gridpool_id: int | None
