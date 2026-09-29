@@ -470,6 +470,10 @@ def _metric_config_bounds_from_proto(
                 minor_issues.append(
                     f"metric_config_bounds has an unrecognized metric {metric}"
                 )
+            case Metric():
+                pass
+            case unexpected:
+                assert_never(unexpected)
 
         if not metric_bound.HasField("config_bounds"):
             major_issues.append(
