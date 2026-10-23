@@ -41,6 +41,7 @@ from ._inverter import (
     UnspecifiedInverter,
 )
 from ._meter import Meter
+from ._operational_mode import ElectricalComponentOperationalMode
 from ._plc import Plc
 from ._power_transformer import PowerTransformer
 from ._precharger import Precharger
@@ -68,6 +69,7 @@ __all__ = [
     "CapacitorBank",
     "ElectricalComponentCategory",
     "ElectricalComponent",
+    "ElectricalComponentOperationalMode",
     "Electrolyzer",
     "AcEvCharger",
     "DcEvCharger",
