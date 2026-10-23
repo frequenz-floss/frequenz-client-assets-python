@@ -15,6 +15,7 @@ from frequenz.client.assets.metrics._bounds import Bounds
 from frequenz.client.assets.metrics._metric import Metric
 
 from .._lifetime import Lifetime
+from ._operational_mode import ElectricalComponentOperationalMode
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -55,6 +56,15 @@ class ElectricalComponent:  # pylint: disable=too-many-instance-attributes
         hash=False,
     )
     """List of rated bounds present for the component identified by Metric."""
+
+    operational_mode: ElectricalComponentOperationalMode | int = (
+        ElectricalComponentOperationalMode.UNSPECIFIED
+    )
+    """The requested operational mode returned by the Assets service.
+
+    This value does not confirm that the component has applied the mode.
+    Unknown modes retain their integer value.
+    """
 
     def __new__(cls, *_: Any, **__: Any) -> Self:
         """Prevent instantiation of this class."""

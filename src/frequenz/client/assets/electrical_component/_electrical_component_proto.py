@@ -52,6 +52,7 @@ from ._inverter import (
     UnspecifiedInverter,
 )
 from ._meter import Meter
+from ._operational_mode import ElectricalComponentOperationalMode
 from ._plc import Plc
 from ._power_transformer import PowerTransformer
 from ._precharger import Precharger
@@ -112,6 +113,7 @@ class ElectricalComponentBaseData(NamedTuple):
     category: ElectricalComponentCategory | int
     lifetime: Lifetime
     rated_bounds: dict[Metric | int, Bounds]
+    operational_mode: ElectricalComponentOperationalMode | int
 
 
 def component_base_from_proto_with_issues(
@@ -170,6 +172,7 @@ def component_base_from_proto_with_issues(
         category,
         lifetime,
         rated_bounds,
+        enum_from_proto(message.operational_mode, ElectricalComponentOperationalMode),
     )
 
 
@@ -208,6 +211,7 @@ def electrical_component_from_proto_with_issues(
                 category=base_data.category,
                 operational_lifetime=base_data.lifetime,
                 rated_bounds=base_data.rated_bounds,
+                operational_mode=base_data.operational_mode,
             )
         case (
             ElectricalComponentCategory.UNSPECIFIED
@@ -234,6 +238,7 @@ def electrical_component_from_proto_with_issues(
                 model_name=base_data.model_name,
                 operational_lifetime=base_data.lifetime,
                 rated_bounds=base_data.rated_bounds,
+                operational_mode=base_data.operational_mode,
             )
         case ElectricalComponentCategory.BATTERY:
             battery_enum_to_class: dict[
@@ -258,6 +263,7 @@ def electrical_component_from_proto_with_issues(
                         model_name=base_data.model_name,
                         operational_lifetime=base_data.lifetime,
                         rated_bounds=base_data.rated_bounds,
+                        operational_mode=base_data.operational_mode,
                     )
                 case int():
                     major_issues.append(f"battery type {battery_type} is unrecognized")
@@ -270,6 +276,7 @@ def electrical_component_from_proto_with_issues(
                         operational_lifetime=base_data.lifetime,
                         type=battery_type,
                         rated_bounds=base_data.rated_bounds,
+                        operational_mode=base_data.operational_mode,
                     )
                 case unexpected_battery_type:
                     assert_never(unexpected_battery_type)
@@ -305,6 +312,7 @@ def electrical_component_from_proto_with_issues(
                         model_name=base_data.model_name,
                         operational_lifetime=base_data.lifetime,
                         rated_bounds=base_data.rated_bounds,
+                        operational_mode=base_data.operational_mode,
                     )
                 case int():
                     major_issues.append(
@@ -319,6 +327,7 @@ def electrical_component_from_proto_with_issues(
                         operational_lifetime=base_data.lifetime,
                         type=ev_charger_type,
                         rated_bounds=base_data.rated_bounds,
+                        operational_mode=base_data.operational_mode,
                     )
                 case unexpected_ev_charger_type:
                     assert_never(unexpected_ev_charger_type)
@@ -357,6 +366,7 @@ def electrical_component_from_proto_with_issues(
                         model_name=base_data.model_name,
                         operational_lifetime=base_data.lifetime,
                         rated_bounds=base_data.rated_bounds,
+                        operational_mode=base_data.operational_mode,
                     )
                 case int():
                     major_issues.append(
@@ -370,6 +380,7 @@ def electrical_component_from_proto_with_issues(
                         model_name=base_data.model_name,
                         operational_lifetime=base_data.lifetime,
                         rated_bounds=base_data.rated_bounds,
+                        operational_mode=base_data.operational_mode,
                         type=inverter_type,
                     )
                 case unexpected_inverter_type:
@@ -387,6 +398,7 @@ def electrical_component_from_proto_with_issues(
                 model_name=base_data.model_name,
                 operational_lifetime=base_data.lifetime,
                 rated_bounds=base_data.rated_bounds,
+                operational_mode=base_data.operational_mode,
                 rated_fuse_current=rated_fuse_current,
             )
         case ElectricalComponentCategory.POWER_TRANSFORMER:
@@ -398,6 +410,7 @@ def electrical_component_from_proto_with_issues(
                 model_name=base_data.model_name,
                 operational_lifetime=base_data.lifetime,
                 rated_bounds=base_data.rated_bounds,
+                operational_mode=base_data.operational_mode,
                 primary_power=message.category_specific_info.power_transformer.primary,
                 secondary_power=message.category_specific_info.power_transformer.secondary,
             )
