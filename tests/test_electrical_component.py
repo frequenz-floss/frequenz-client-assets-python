@@ -46,6 +46,8 @@ def test_operational_mode_for_all_component_types(
             message.category_specific_info.inverter.type = (
                 electrical_components_pb2.InverterType.ValueType(subcategory)
             )
+        case _:
+            pass
 
     component = electrical_component_proto(message)
 
