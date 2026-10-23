@@ -1,8 +1,17 @@
 # Frequenz Assets API Client Release Notes
 
+## Summary
+
+<!-- Here goes a general summary of what this release is about -->
+
+## Upgrading
+
+<!-- Here goes notes on how to upgrade from previous versions, including deprecations and what they should be replaced with -->
+
 ## New Features
 
-- Electrical components now expose `operational_mode` with the requested mode
-  returned by Assets v0.1.1. Known values use `ElectricalComponentOperationalMode`;
-  unknown values remain integers. The default is `UNSPECIFIED` when the server
-  does not supply a mode. This value does not confirm that the mode is applied.
+<!-- Here goes the main new features and examples or instructions on how to use them -->
+
+## Bug Fixes
+
+<!-- Here goes notable bug fixes that are worth a special mention or explanation -->
