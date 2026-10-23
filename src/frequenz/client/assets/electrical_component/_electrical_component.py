@@ -72,6 +72,58 @@ class ElectricalComponent:  # pylint: disable=too-many-instance-attributes
             raise TypeError(f"Cannot instantiate {cls.__name__} directly")
         return super().__new__(cls)
 
+    def provides_telemetry(self) -> bool:
+        """Check whether the requested mode enables telemetry.
+
+        Returns:
+            Whether the requested mode enables telemetry.
+
+        Raises:
+            ValueError: If the operational mode is unspecified or unrecognized.
+        """
+        match self.operational_mode:
+            case (
+                ElectricalComponentOperationalMode.TELEMETRY_ONLY
+                | ElectricalComponentOperationalMode.CONTROL_AND_TELEMETRY
+            ):
+                return True
+            case (
+                ElectricalComponentOperationalMode.INACTIVE
+                | ElectricalComponentOperationalMode.CONTROL_ONLY
+            ):
+                return False
+            case ElectricalComponentOperationalMode.UNSPECIFIED | int():
+                raise ValueError(
+                    f"Telemetry availability is unknown for {self}: "
+                    "operational mode is unspecified or unrecognized"
+                )
+
+    def accepts_control(self) -> bool:
+        """Check whether the requested mode enables control commands.
+
+        Returns:
+            Whether the requested mode enables control commands.
+
+        Raises:
+            ValueError: If the operational mode is unspecified or unrecognized.
+        """
+        match self.operational_mode:
+            case (
+                ElectricalComponentOperationalMode.CONTROL_ONLY
+                | ElectricalComponentOperationalMode.CONTROL_AND_TELEMETRY
+            ):
+                return True
+            case (
+                ElectricalComponentOperationalMode.INACTIVE
+                | ElectricalComponentOperationalMode.TELEMETRY_ONLY
+            ):
+                return False
+            case ElectricalComponentOperationalMode.UNSPECIFIED | int():
+                raise ValueError(
+                    f"Control availability is unknown for {self}: "
+                    "operational mode is unspecified or unrecognized"
+                )
+
     @property
     def identity(self) -> tuple[ElectricalComponentId, MicrogridId]:
         """The identity of this component.
