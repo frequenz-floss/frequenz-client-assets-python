@@ -23,18 +23,34 @@ from frequenz.client.assets.electrical_component._electrical_component_proto imp
     "category", [*electrical_components_pb2.ElectricalComponentCategory.values(), 99]
 )
 @pytest.mark.parametrize("subcategory", [0, 99])
+@pytest.mark.parametrize(
+    ("mode", "telemetry", "control"),
+    [
+        (0, None, None),
+        (1, False, False),
+        (2, True, False),
+        (3, False, True),
+        (4, True, True),
+        (99, None, None),
+    ],
+)
 def test_operational_mode_for_all_component_types(
-    category: int, subcategory: int
+    category: int,
+    subcategory: int,
+    mode: int,
+    telemetry: bool | None,
+    control: bool | None,
 ) -> None:
-    """Preserve the mode for known and unknown component categories and types."""
-    mode = electrical_components_pb2.ELECTRICAL_COMPONENT_OPERATIONAL_MODE_CONTROL_ONLY
+    """Initialize mode flags for known and unknown categories and types."""
     message = electrical_components_pb2.ElectricalComponent(
         id=1,
         microgrid_id=1234,
         category=electrical_components_pb2.ElectricalComponentCategory.ValueType(
             category
         ),
-        operational_mode=mode,
+        operational_mode=electrical_components_pb2.ElectricalComponentOperationalMode.ValueType(
+            mode
+        ),
     )
     match category:
         case electrical_components_pb2.ELECTRICAL_COMPONENT_CATEGORY_BATTERY:
@@ -54,56 +70,74 @@ def test_operational_mode_for_all_component_types(
 
     component = electrical_component_proto(message)
 
-    assert component.operational_mode is ElectricalComponentOperationalMode.CONTROL_ONLY
-    assert component.provides_telemetry() is False
-    assert component.accepts_control() is True
+    if mode == 99:
+        assert component.operational_mode == mode
+    else:
+        assert component.operational_mode is ElectricalComponentOperationalMode(mode)
+    if telemetry is None:
+        with pytest.raises(ValueError, match="telemetry availability is unknown"):
+            component.provides_telemetry()
+        with pytest.raises(ValueError, match="control availability is unknown"):
+            component.accepts_control()
+    else:
+        assert component.provides_telemetry() is telemetry
+        assert component.accepts_control() is control
 
 
 @pytest.mark.parametrize(
-    ("mode", "telemetry", "control"),
+    ("telemetry", "control"),
     [
-        (ElectricalComponentOperationalMode.INACTIVE, False, False),
-        (ElectricalComponentOperationalMode.TELEMETRY_ONLY, True, False),
-        (ElectricalComponentOperationalMode.CONTROL_ONLY, False, True),
-        (ElectricalComponentOperationalMode.CONTROL_AND_TELEMETRY, True, True),
+        (False, False),
+        (True, False),
+        (False, True),
+        (True, True),
     ],
 )
-def test_operational_mode_helpers(
-    mode: ElectricalComponentOperationalMode, telemetry: bool, control: bool
-) -> None:
-    """Derive telemetry and control flags from each known requested mode."""
+def test_operational_mode_helpers(telemetry: bool, control: bool) -> None:
+    """Return the stored telemetry and control flags."""
     component = SteamBoiler(
         id=ElectricalComponentId(1),
         microgrid_id=MicrogridId(1234),
-        operational_mode=mode,
+        _provides_telemetry=telemetry,
+        _accepts_control=control,
     )
 
     assert component.provides_telemetry() is telemetry
     assert component.accepts_control() is control
 
 
-@pytest.mark.parametrize("mode", [ElectricalComponentOperationalMode.UNSPECIFIED, 99])
-def test_operational_mode_helpers_raise_for_unknown_mode(
-    mode: ElectricalComponentOperationalMode | int,
+@pytest.mark.parametrize(
+    ("telemetry", "control"), [(None, None), (True, None), (None, False)]
+)
+def test_operational_mode_helpers_with_unspecified_flags(
+    telemetry: bool | None,
+    control: bool | None,
 ) -> None:
-    """Reject unspecified and unrecognized operational modes."""
+    """Raise only when the requested flag is unspecified."""
     component = SteamBoiler(
         id=ElectricalComponentId(1),
         microgrid_id=MicrogridId(1234),
-        operational_mode=mode,
+        _provides_telemetry=telemetry,
+        _accepts_control=control,
     )
 
-    with pytest.raises(ValueError, match="Telemetry"):
-        component.provides_telemetry()
-    with pytest.raises(ValueError, match="Control"):
-        component.accepts_control()
+    if telemetry is None:
+        with pytest.raises(ValueError, match="telemetry availability is unknown"):
+            component.provides_telemetry()
+    else:
+        assert component.provides_telemetry() is telemetry
+    if control is None:
+        with pytest.raises(ValueError, match="control availability is unknown"):
+            component.accepts_control()
+    else:
+        assert component.accepts_control() is control
 
 
 def test_operational_mode_helpers_without_mode() -> None:
     """Reject components constructed without an operational mode."""
     component = SteamBoiler(id=ElectricalComponentId(1), microgrid_id=MicrogridId(1234))
 
-    with pytest.raises(ValueError, match="Telemetry"):
+    with pytest.raises(ValueError, match="telemetry availability is unknown"):
         component.provides_telemetry()
-    with pytest.raises(ValueError, match="Control"):
+    with pytest.raises(ValueError, match="control availability is unknown"):
         component.accepts_control()

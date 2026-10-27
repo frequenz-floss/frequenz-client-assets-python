@@ -66,6 +66,12 @@ class ElectricalComponent:  # pylint: disable=too-many-instance-attributes
     Unknown modes retain their integer value.
     """
 
+    _provides_telemetry: bool | None = None
+    """Whether the requested mode enables telemetry, or `None` if unknown."""
+
+    _accepts_control: bool | None = None
+    """Whether the requested mode enables control commands, or `None` if unknown."""
+
     def __new__(cls, *_: Any, **__: Any) -> Self:
         """Prevent instantiation of this class."""
         if cls is ElectricalComponent:
@@ -81,22 +87,12 @@ class ElectricalComponent:  # pylint: disable=too-many-instance-attributes
         Raises:
             ValueError: If the operational mode is unspecified or unrecognized.
         """
-        match self.operational_mode:
-            case (
-                ElectricalComponentOperationalMode.TELEMETRY_ONLY
-                | ElectricalComponentOperationalMode.CONTROL_AND_TELEMETRY
-            ):
-                return True
-            case (
-                ElectricalComponentOperationalMode.INACTIVE
-                | ElectricalComponentOperationalMode.CONTROL_ONLY
-            ):
-                return False
-            case ElectricalComponentOperationalMode.UNSPECIFIED | int():
-                raise ValueError(
-                    f"Telemetry availability is unknown for {self}: "
-                    "operational mode is unspecified or unrecognized"
-                )
+        if self._provides_telemetry is None:
+            raise ValueError(
+                f"operational mode of {self} is unspecified or unrecognized; "
+                "telemetry availability is unknown"
+            )
+        return self._provides_telemetry
 
     def accepts_control(self) -> bool:
         """Check whether the requested mode enables control commands.
@@ -107,22 +103,12 @@ class ElectricalComponent:  # pylint: disable=too-many-instance-attributes
         Raises:
             ValueError: If the operational mode is unspecified or unrecognized.
         """
-        match self.operational_mode:
-            case (
-                ElectricalComponentOperationalMode.CONTROL_ONLY
-                | ElectricalComponentOperationalMode.CONTROL_AND_TELEMETRY
-            ):
-                return True
-            case (
-                ElectricalComponentOperationalMode.INACTIVE
-                | ElectricalComponentOperationalMode.TELEMETRY_ONLY
-            ):
-                return False
-            case ElectricalComponentOperationalMode.UNSPECIFIED | int():
-                raise ValueError(
-                    f"Control availability is unknown for {self}: "
-                    "operational mode is unspecified or unrecognized"
-                )
+        if self._accepts_control is None:
+            raise ValueError(
+                f"operational mode of {self} is unspecified or unrecognized; "
+                "control availability is unknown"
+            )
+        return self._accepts_control
 
     @property
     def identity(self) -> tuple[ElectricalComponentId, MicrogridId]:

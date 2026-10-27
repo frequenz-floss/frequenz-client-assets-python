@@ -66,6 +66,39 @@ from ._wind_turbine import WindTurbine
 _logger = logging.getLogger(__name__)
 
 
+_BOOLS_BY_OPERATIONAL_MODE: dict[int, tuple[bool | None, bool | None]] = {
+    electrical_components_pb2.ELECTRICAL_COMPONENT_OPERATIONAL_MODE_INACTIVE: (
+        False,
+        False,
+    ),
+    electrical_components_pb2.ELECTRICAL_COMPONENT_OPERATIONAL_MODE_TELEMETRY_ONLY: (
+        True,
+        False,
+    ),
+    electrical_components_pb2.ELECTRICAL_COMPONENT_OPERATIONAL_MODE_CONTROL_ONLY: (
+        False,
+        True,
+    ),
+    electrical_components_pb2.ELECTRICAL_COMPONENT_OPERATIONAL_MODE_CONTROL_AND_TELEMETRY: (
+        True,
+        True,
+    ),
+}
+
+
+def _operational_mode_to_bools(value: int) -> tuple[bool | None, bool | None]:
+    """Map a protobuf operational mode to telemetry and control flags.
+
+    Args:
+        value: A protobuf operational mode value.
+
+    Returns:
+        A `(provides_telemetry, accepts_control)` tuple. Both flags are `None`
+            when the mode is unspecified or unrecognized.
+    """
+    return _BOOLS_BY_OPERATIONAL_MODE.get(value, (None, None))
+
+
 def electrical_component_proto(
     message: electrical_components_pb2.ElectricalComponent,
 ) -> ElectricalComponentType:
@@ -114,6 +147,8 @@ class ElectricalComponentBaseData(NamedTuple):
     lifetime: Lifetime
     rated_bounds: dict[Metric | int, Bounds]
     operational_mode: ElectricalComponentOperationalMode | int
+    provides_telemetry: bool | None
+    accepts_control: bool | None
 
 
 def component_base_from_proto_with_issues(
@@ -173,6 +208,7 @@ def component_base_from_proto_with_issues(
         lifetime,
         rated_bounds,
         enum_from_proto(message.operational_mode, ElectricalComponentOperationalMode),
+        *_operational_mode_to_bools(message.operational_mode),
     )
 
 
@@ -212,6 +248,8 @@ def electrical_component_from_proto_with_issues(
                 operational_lifetime=base_data.lifetime,
                 rated_bounds=base_data.rated_bounds,
                 operational_mode=base_data.operational_mode,
+                _provides_telemetry=base_data.provides_telemetry,
+                _accepts_control=base_data.accepts_control,
             )
         case (
             ElectricalComponentCategory.UNSPECIFIED
@@ -239,6 +277,8 @@ def electrical_component_from_proto_with_issues(
                 operational_lifetime=base_data.lifetime,
                 rated_bounds=base_data.rated_bounds,
                 operational_mode=base_data.operational_mode,
+                _provides_telemetry=base_data.provides_telemetry,
+                _accepts_control=base_data.accepts_control,
             )
         case ElectricalComponentCategory.BATTERY:
             battery_enum_to_class: dict[
@@ -264,6 +304,8 @@ def electrical_component_from_proto_with_issues(
                         operational_lifetime=base_data.lifetime,
                         rated_bounds=base_data.rated_bounds,
                         operational_mode=base_data.operational_mode,
+                        _provides_telemetry=base_data.provides_telemetry,
+                        _accepts_control=base_data.accepts_control,
                     )
                 case int():
                     major_issues.append(f"battery type {battery_type} is unrecognized")
@@ -277,6 +319,8 @@ def electrical_component_from_proto_with_issues(
                         type=battery_type,
                         rated_bounds=base_data.rated_bounds,
                         operational_mode=base_data.operational_mode,
+                        _provides_telemetry=base_data.provides_telemetry,
+                        _accepts_control=base_data.accepts_control,
                     )
                 case unexpected_battery_type:
                     assert_never(unexpected_battery_type)
@@ -313,6 +357,8 @@ def electrical_component_from_proto_with_issues(
                         operational_lifetime=base_data.lifetime,
                         rated_bounds=base_data.rated_bounds,
                         operational_mode=base_data.operational_mode,
+                        _provides_telemetry=base_data.provides_telemetry,
+                        _accepts_control=base_data.accepts_control,
                     )
                 case int():
                     major_issues.append(
@@ -328,6 +374,8 @@ def electrical_component_from_proto_with_issues(
                         type=ev_charger_type,
                         rated_bounds=base_data.rated_bounds,
                         operational_mode=base_data.operational_mode,
+                        _provides_telemetry=base_data.provides_telemetry,
+                        _accepts_control=base_data.accepts_control,
                     )
                 case unexpected_ev_charger_type:
                     assert_never(unexpected_ev_charger_type)
@@ -367,6 +415,8 @@ def electrical_component_from_proto_with_issues(
                         operational_lifetime=base_data.lifetime,
                         rated_bounds=base_data.rated_bounds,
                         operational_mode=base_data.operational_mode,
+                        _provides_telemetry=base_data.provides_telemetry,
+                        _accepts_control=base_data.accepts_control,
                     )
                 case int():
                     major_issues.append(
@@ -381,6 +431,8 @@ def electrical_component_from_proto_with_issues(
                         operational_lifetime=base_data.lifetime,
                         rated_bounds=base_data.rated_bounds,
                         operational_mode=base_data.operational_mode,
+                        _provides_telemetry=base_data.provides_telemetry,
+                        _accepts_control=base_data.accepts_control,
                         type=inverter_type,
                     )
                 case unexpected_inverter_type:
@@ -399,6 +451,8 @@ def electrical_component_from_proto_with_issues(
                 operational_lifetime=base_data.lifetime,
                 rated_bounds=base_data.rated_bounds,
                 operational_mode=base_data.operational_mode,
+                _provides_telemetry=base_data.provides_telemetry,
+                _accepts_control=base_data.accepts_control,
                 rated_fuse_current=rated_fuse_current,
             )
         case ElectricalComponentCategory.POWER_TRANSFORMER:
@@ -411,6 +465,8 @@ def electrical_component_from_proto_with_issues(
                 operational_lifetime=base_data.lifetime,
                 rated_bounds=base_data.rated_bounds,
                 operational_mode=base_data.operational_mode,
+                _provides_telemetry=base_data.provides_telemetry,
+                _accepts_control=base_data.accepts_control,
                 primary_power=message.category_specific_info.power_transformer.primary,
                 secondary_power=message.category_specific_info.power_transformer.secondary,
             )

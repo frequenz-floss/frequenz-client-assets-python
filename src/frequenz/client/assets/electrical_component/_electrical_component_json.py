@@ -15,7 +15,14 @@ def electrical_components_to_json(
 ) -> str:
     """Convert a list of ElectricalComponent objects to a JSON string."""
     return json.dumps(
-        [asdict(component) for component in electrical_components],
+        [
+            {
+                key: value
+                for key, value in asdict(component).items()
+                if key not in {"_provides_telemetry", "_accepts_control"}
+            }
+            for component in electrical_components
+        ],
         cls=AssetsJSONEncoder,
         indent=2,
     )
