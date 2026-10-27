@@ -10,7 +10,10 @@
 
 ## New Features
 
-<!-- Here goes the main new features and examples or instructions on how to use them -->
+- Electrical components now provide `provides_telemetry()` and `accepts_control()`
+  to interpret the requested operational mode. Both methods raise `ValueError`
+  for unspecified or unrecognized modes. These results describe the requested
+  configuration, not the device's current state.
 
 ## Bug Fixes
 

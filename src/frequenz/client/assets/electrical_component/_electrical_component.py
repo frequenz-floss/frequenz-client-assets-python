@@ -66,11 +66,49 @@ class ElectricalComponent:  # pylint: disable=too-many-instance-attributes
     Unknown modes retain their integer value.
     """
 
+    _provides_telemetry: bool | None = None
+    """Whether the requested mode enables telemetry, or `None` if unknown."""
+
+    _accepts_control: bool | None = None
+    """Whether the requested mode enables control commands, or `None` if unknown."""
+
     def __new__(cls, *_: Any, **__: Any) -> Self:
         """Prevent instantiation of this class."""
         if cls is ElectricalComponent:
             raise TypeError(f"Cannot instantiate {cls.__name__} directly")
         return super().__new__(cls)
+
+    def provides_telemetry(self) -> bool:
+        """Check whether the requested mode enables telemetry.
+
+        Returns:
+            Whether the requested mode enables telemetry.
+
+        Raises:
+            ValueError: If the operational mode is unspecified or unrecognized.
+        """
+        if self._provides_telemetry is None:
+            raise ValueError(
+                f"operational mode of {self} is unspecified or unrecognized; "
+                "telemetry availability is unknown"
+            )
+        return self._provides_telemetry
+
+    def accepts_control(self) -> bool:
+        """Check whether the requested mode enables control commands.
+
+        Returns:
+            Whether the requested mode enables control commands.
+
+        Raises:
+            ValueError: If the operational mode is unspecified or unrecognized.
+        """
+        if self._accepts_control is None:
+            raise ValueError(
+                f"operational mode of {self} is unspecified or unrecognized; "
+                "control availability is unknown"
+            )
+        return self._accepts_control
 
     @property
     def identity(self) -> tuple[ElectricalComponentId, MicrogridId]:

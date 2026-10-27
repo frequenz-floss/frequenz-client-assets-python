@@ -190,7 +190,16 @@ async def test_list_components_operational_mode(
 
     assert len(components) == 1
     assert components[0].operational_mode == expected_mode
-    assert (
-        json.loads(electrical_components_to_json(components))[0]["operational_mode"]
-        == proto_mode
-    )
+    component_json = json.loads(electrical_components_to_json(components))[0]
+    assert component_json["operational_mode"] == proto_mode
+    assert set(component_json) == {
+        "id",
+        "microgrid_id",
+        "name",
+        "category",
+        "manufacturer",
+        "model_name",
+        "operational_lifetime",
+        "rated_bounds",
+        "operational_mode",
+    }
